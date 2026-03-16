@@ -1,0 +1,225 @@
+body{
+  background: rgb(203, 166, 255);
+}
+
+.header{
+  background: rgb(62, 62, 62);
+  color: white;
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 0;
+  padding: 5px 20px;
+  border-radius: 15px 15px 0 0;
+}
+
+.header h1{
+  margin-bottom: 0;
+}
+
+.navbar{
+  margin: 15px 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.navbar-content a{
+  display: block;
+  padding: 0 15px;
+  text-decoration: none;
+  color: white;
+  transition: color 0.2s ease;
+}
+
+.navbar-content a:hover{
+  color: rgb(187, 226, 253);
+}
+
+.navbar-content button{
+  background: rgb(62, 62, 62);
+  border: white solid;
+  border-width: 0 1px;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+}
+
+.navbar-content span{
+  padding: 0 15px;
+  color: white;
+  transition: color 0.2s ease;
+}
+
+.navbar-content span:hover{
+  color: rgb(187, 226, 253);
+}
+
+.navbar-content button:first-child{
+  border-left: none;
+}
+
+.navbar-content button:first-child a{
+  padding-left: 5px;
+}
+
+.navbar-content button:last-child{
+  border-right: none;
+}
+
+.main{
+  background: rgb(238, 238, 238);
+  color: black;
+  width: 90%;
+  margin: 0 auto;
+  padding: 5px 20px;
+}
+
+.footer{
+  background: rgb(62, 62, 62);
+  color: white;
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 0;
+  padding: 5px 20px;
+  border-radius: 0 0 15px 15px;
+  display: flex;
+  justify-content: center;
+}
+
+.window-card{
+  background: white;
+  margin: 15px auto;
+  padding: 5px 15px;
+  width: 80%;
+  border: 1px solid rgb(216, 216, 216);
+  border-radius: 20px;
+}
+
+.user-form{
+  font-size: large;
+}
+
+.user-form div{
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+  margin-bottom: 10px;
+}
+
+.user-form label{
+  font-weight: bold;
+  width: 180px;
+}
+
+.user-form label > span{
+  color: red;
+}
+
+.user-form input{
+  height: 25px;
+  width: 230px;
+  padding: 1px 10px;
+  border: 1px solid rgb(142, 142, 142);
+  border-radius: 5px;
+  flex: 1;
+}
+
+.user-form button{
+  padding: 1px 10px;
+  height: 30px;
+  font-size: medium;
+  background: rgb(62, 62, 62);
+  color: white;
+  border: 1px solid white;
+  border-radius: 5px;
+  display: block;
+  margin-left: auto;
+  transition: background 0.2s ease;
+}
+
+.user-form button:hover{
+  background: rgb(87, 87, 87);
+  cursor: pointer;
+}
+
+.error-message{
+  display: block;
+  margin-left: auto;
+  margin-right: 15px;
+  margin-bottom: 5px;
+  font-size: small;
+  color: red;
+}
+
+.success-message{
+  display: block;
+  margin-left: auto;
+  margin-right: 15px;
+  margin-bottom: 5px;
+  font-size: small;
+  color: green;
+}
+
+.pagination{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.paginationButtons span{
+    margin: 0 5px;
+}
+
+.paginationButtons button{
+    background: rgb(62, 62, 62);
+    color: white;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+.paginationButtons button:hover{
+    background: rgb(46, 46, 46);
+    cursor: pointer;
+    color: white;
+    border-radius: 10px;
+}
+
+.paginationButtons button:disabled{
+    background: rgb(181, 181, 181);
+    cursor: default;
+}
+
+.topic-head{
+    width: 90%;
+    background: rgb(61, 57, 57);
+    color: white;
+    border-radius: 15px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+.hasMore{
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+
+.hasMore button{
+    display: block;
+    background: white;
+    color: black;
+    border: 1px solid white;
+    border-radius: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 8px;
+    font-weight: bold;
+    width: 30%;
+    transition: background 0.2s ease;
+}
+
+.hasMore button:hover{
+    background: rgb(216, 216, 216);
+    cursor: pointer;
+}

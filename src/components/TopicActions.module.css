@@ -1,0 +1,125 @@
+.actionWindow{
+    width: 95%;
+    padding: 15px;
+    border: 1px solid black;
+    border-top: 0;
+    border-radius: 0 0 15px 15px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 40px;
+    background: white;
+}
+
+.searchBar{
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.actionWindow label{
+    margin-right: 10px;
+    font-weight: bold;
+    font-size: large;
+}
+
+.searchBar input{
+    flex: 1;
+    border-radius: 10px;
+    padding: 5px 10px;
+}
+
+.searchBar button{
+    border-radius: 10px;
+    margin-left: 10px;
+    padding: 5px;
+    font-weight: bold;
+}
+
+.searchBar button:hover{
+    cursor: pointer;
+}
+
+.botaoFiltrar{
+    background: rgb(62, 62, 62);
+    color: white;
+    transition: background ease 0.2s;
+    border-color: white;
+}
+
+.botaoFiltrar:hover{
+    background: rgb(90, 90, 90);
+}
+
+.botaoLimpar{
+    background: rgb(238, 238, 238);
+    color: black;
+    transition: background ease 0.2s;
+}
+
+.botaoLimpar:hover{
+    background: rgb(210, 210, 210);
+}
+
+.botaoCriar{
+    margin-left: auto;
+    color: white;
+    transition: color ease 0.2s;
+}
+
+.botaoCriar:hover{
+    opacity: 0.9;
+}
+
+.formWindow{
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.topicoFormulario{
+    font-size: large;
+}
+
+.topicoFormulario label{
+    width: 100px;
+    margin-right: 15px;
+}
+
+.topicoFormulario label > span{
+  color: red;
+}
+
+.topicoFormulario > div{
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.topicoFormulario input{
+    border-radius: 10px;
+    padding: 5px 10px;
+    flex: 1;
+}
+
+.topicoFormulario textarea{
+    border-radius: 10px;
+    padding: 5px 10px;
+    flex: 1;
+    resize: vertical;
+}
+
+.topicoFormulario button{
+    width: 80px;
+    border-radius: 10px;
+    padding: 5px;
+    background: green;
+    color: white;
+    font-weight: bold;
+    margin-left: auto;
+    transition: background ease 0.2s;
+}
+
+.topicoFormulario button:hover{
+    background: rgb(8, 198, 8);
+    cursor: pointer;
+}

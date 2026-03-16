@@ -1,0 +1,87 @@
+.topicSection{
+    border-bottom: 5px solid white;
+    padding-bottom: 30px;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-bottom: 30px;
+}
+
+.topicBody{
+    background: rgb(72, 67, 67);
+    border-radius: 10px;
+    border: 1px dashed rgb(224, 224, 224);
+    padding: 5px 20px;
+    margin-bottom: 20px;
+}
+
+.topicFooter{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.topicFooter button{
+    background: white;
+    color: black;
+    border: 1px solid white;
+    border-radius: 10px;
+    padding: 5px;
+    font-weight: bold;
+    transition: background 0.2s ease;
+}
+
+.topicFooter button:hover{
+    background: rgb(216, 216, 216);
+    cursor: pointer;
+}
+
+.comments{
+    background: rgb(42, 42, 42);
+    height: 30px;
+    padding: 5px;
+    border-radius: 10px;
+    margin-right: 15px;
+    font-weight: bold;
+}
+
+.data{
+    margin-right: 15px;
+}
+
+.comentarioFormulario > div{
+    margin-bottom: 15px;
+    display: flex;
+}
+
+.comentarioFormulario textarea{
+    background: rgb(65, 63, 63);
+    color: white;
+    border-radius: 10px;
+    margin: 10px;
+    margin-top: 20px;
+    padding: 5px 10px;
+    flex: 1;
+    resize: vertical;
+}
+
+.comentarioFormulario textarea::placeholder{
+    color: white;
+    opacity: 0.7;
+}
+
+.comentarioFormulario button{
+    width: 80px;
+    border: 1px solid white;
+    border-radius: 10px;
+    padding: 5px;
+    background: green;
+    color: white;
+    font-weight: bold;
+    margin-left: auto;
+    transition: background ease 0.2s;
+}
+
+.comentarioFormulario button:hover{
+    background: rgb(8, 198, 8);
+    cursor: pointer;
+}

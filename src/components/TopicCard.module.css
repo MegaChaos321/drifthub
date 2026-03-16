@@ -1,0 +1,81 @@
+.topicCard{
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    background: rgb(62, 62, 62);
+    color: white;
+    border: 1px solid rgb(62, 62, 62);
+    border-radius: 15px;
+    padding: 0 30px;
+    margin-bottom: 30px;
+    box-shadow: 5px 7px 10px black;
+    transition: transform ease 0.2s;
+}
+
+.topicCard:hover{
+    transform: translateY(-5px);
+}
+
+.cardHeader{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0;
+    margin-top: 10px;
+    border-radius: 20px;
+}
+
+.cardHeader:hover{
+    background: rgb(42, 42, 42);
+}
+
+.cardHeader h2{
+    margin-left: 15px;
+}
+
+.cardHeader button{
+    height: 40px;
+    width: 40px;
+    border-radius: 10px;
+    background: red;
+    transition: background ease 0.2s;
+    margin-right: 15px;
+    z-index: 2;
+}
+
+.cardHeader button:hover{
+    cursor: pointer;
+    background: rgb(180, 7, 7);
+}
+
+.topicLink{
+    text-decoration: none;
+    color: white;
+}
+
+.topicLink:hover{
+    color: rgb(224, 224, 224);
+}
+
+.cardBody{
+    padding: 5px 10px;
+}
+
+.cardFooter{
+    display: flex;
+    align-items: center;
+    padding-bottom: 10px;
+}
+
+.comments{
+    background: rgb(42, 42, 42);
+    height: 30px;
+    padding: 5px 5px 0 5px;
+    border-radius: 10px;
+    margin-right: 15px;
+    font-weight: bold;
+}
+
+.data{
+    margin-right: 15px;
+}

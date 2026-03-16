@@ -1,0 +1,106 @@
+.commentSection{
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.commentSection hr{
+    border: none;
+    border-top: 2px dotted #d1d1d1;
+    color: #fff;
+    background-color: transparent;
+    height: 1px;
+    margin: 30px auto;
+    opacity: 0.3;
+}
+
+.commentHeader{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.user{
+    margin-right: 5px;
+}
+
+.data{
+    margin-right: 10px;
+}
+
+.edited{
+    font-size: small;
+}
+
+.botaoApagar{
+    height: 30px;
+    width: 30px;
+    padding: 2px;
+    border-radius: 10px;
+    background: red;
+    transition: background ease 0.2s;
+    margin-right: 5px;
+}
+
+.botaoApagar:hover{
+    cursor: pointer;
+    background: rgb(180, 7, 7);
+}
+
+.botaoEditar{
+    height: 30px;
+    width: 30px;
+    padding: 2px;
+    border-radius: 10px;
+    background: lightgrey;
+    transition: background ease 0.2s;
+    margin-right: 5px;
+}
+
+.botaoEditar:hover{
+    cursor: pointer;
+    background: grey;
+}
+
+.commentContent{
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.editForm > div{
+    margin-bottom: 15px;
+    width: 100%;
+    display: flex;
+}
+
+.editForm textarea{
+    background: rgb(65, 63, 63);
+    color: white;
+    border-radius: 10px;
+    margin: 10px;
+    margin-top: 20px;
+    padding: 10px;
+    flex: 1;
+    resize: vertical;
+}
+
+.editForm textarea::placeholder{
+    color: white;
+    opacity: 0.7;
+}
+
+.editForm button{
+    width: 100px;
+    border: 1px solid white;
+    border-radius: 10px;
+    padding: 5px;
+    background: green;
+    color: white;
+    font-weight: bold;
+    margin-left: auto;
+    transition: background ease 0.2s;
+}
+
+.editForm button:hover{
+    background: rgb(8, 198, 8);
+    cursor: pointer;
+}
