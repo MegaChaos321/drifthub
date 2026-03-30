@@ -7,8 +7,8 @@ export default function TopicActions(props){
     const [createForm, setCreateForm] = useState(false);
     const [search, setSearch] = useState("");
     const [formData, setFormData] = useState({
-        titulo: '',
-        conteudo: ''
+        title: '',
+        content: ''
     });
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -38,7 +38,7 @@ export default function TopicActions(props){
         props.handleClearFilter();
     }
 
-    const criarStyle = {
+    const createStyle = {
         background: createForm ? "rgb(165, 13, 13)" : "green",
         transition: "background 0.2s ease"
     };
@@ -46,7 +46,7 @@ export default function TopicActions(props){
     const toggleCreateForm = () => {
         setError('');
         setSuccess('');
-        setFormData({ titulo: '', conteudo: '' });
+        setFormData({ title: '', content: '' });
         setCreateForm(!createForm)
     };
 
@@ -63,28 +63,27 @@ export default function TopicActions(props){
         setLoading(true);
 
         try {
-            const response = await fetch('/api/topicos', {
+            const response = await fetch('/api/topics', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    titulo: formData.titulo,
-                    conteudo: formData.conteudo,
-                    userId: props.user.id,
-                    nome: props.user.nome
+                    title: formData.title.trim(),
+                    content: formData.content.trim(),
+                    userID: props.user.id
                 }),
             });
 
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.error || 'Erro ao criar tópico');
+                throw new Error(data.error || 'Error creating topic');
             }
 
-            setFormData({ titulo: '', conteudo: '' });
-            setSuccess('Tópico criado com sucesso!');
-            props.fetchTopicos();
+            setFormData({ title: '', content: '' });
+            setSuccess('Topic created successfully!');
+            props.fetchTopics();
         } catch (err) {
             setError(err.message);
         } finally {
@@ -95,21 +94,21 @@ export default function TopicActions(props){
     return (
         <div className={styles.actionWindow}>
             <div className={styles.searchBar}>
-                <label>Pesquisar</label>
+                <label>Search</label>
                 <input
                     type="text"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                    placeholder="Digite o que deseja pesquisar..."
+                    placeholder="Search..."
                 />
-                <button className={styles.botaoFiltrar} onClick={handleSearch}>Pesquisar</button>
+                <button className={styles.filterButton} onClick={handleSearch}>Search</button>
                 {search && (
-                    <button className={styles.botaoLimpar} onClick={handleClear}>Limpar</button>
+                    <button className={styles.clearButton} onClick={handleClear}>Clear</button>
                 )}
                 {props.user && (
-                    <button className={styles.botaoCriar} style={criarStyle} onClick={toggleCreateForm}>
-                        {createForm ? "Fechar formulário" : "Criar Tópico"}
+                    <button className={styles.createButton} style={createStyle} onClick={toggleCreateForm}>
+                        {createForm ? "Close Form" : "Create Topic"}
                     </button>
                 )}
             </div>
@@ -117,31 +116,31 @@ export default function TopicActions(props){
                 <div>
                     <hr/>
                     <div className={styles.formWindow}>
-                        <h2>Criar Tópico</h2>
+                        <h2>Create Topic</h2>
                         <br/>
-                        <form className={styles.topicoFormulario} onSubmit={handleSubmit}>
+                        <form className={styles.topicForm} onSubmit={handleSubmit}>
                             <div>
-                                <label htmlFor="titulo">Titulo <span>*</span></label>
+                                <label htmlFor="title">Title <span>*</span></label>
                                 <input
                                     type="text"
-                                    id="titulo"
-                                    name="titulo"
-                                    value={formData.titulo}
+                                    id="title"
+                                    name="title"
+                                    value={formData.title}
                                     onChange={handleChange}
                                     required
-                                    placeholder="Título do tópico"
+                                    placeholder="Title"
                                 />
                             </div>
 
                             <div>
-                                <label htmlFor="conteudo">Descrição</label>
+                                <label htmlFor="content">Description</label>
                                 <textarea
-                                    id="conteudo"
-                                    name="conteudo"
+                                    id="content"
+                                    name="content"
                                     rows="5"
-                                    value={formData.conteudo}
+                                    value={formData.content}
                                     onChange={handleChange}
-                                    placeholder="Descrição do tópico"
+                                    placeholder="Description"
                                 >
                                 </textarea>
                             </div>
@@ -164,7 +163,7 @@ export default function TopicActions(props){
 
                             <div>
                                 <button type="submit"  disabled={loading}>
-                                    {loading ? 'Criando...' : 'Criar'}
+                                    {loading ? 'Creating...' : 'Create'}
                                 </button>
                             </div>
                         </form>

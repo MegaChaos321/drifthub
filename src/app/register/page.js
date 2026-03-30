@@ -5,11 +5,11 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 
-export default function Registo() {
+export default function Register() {
     const { loading: userLoading, user } = useAuth();
     const router = useRouter();
     const [formData, setFormData] = useState({
-        nome: '',
+        username: '',
         email: '',
         password: '',
         confirmPassword: ''
@@ -25,7 +25,7 @@ export default function Registo() {
         }, [userLoading, user, router]);
     
         if (userLoading || user) {
-        return <h1>A carregar...</h1>;
+        return <h1>Loading...</h1>;
         }
 
     const handleChange = (e) => {
@@ -42,19 +42,19 @@ export default function Registo() {
         setLoading(true);
 
         if (formData.password !== formData.confirmPassword) {
-            setError('As passwords não coincidem');
+            setError('The passwords do not match');
             setLoading(false);
             return;
         }
 
         try {
-            const response = await fetch('/api/registo', {
+            const response = await fetch('/api/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    nome: formData.nome,
+                    username: formData.username,
                     email: formData.email,
                     password: formData.password
                 }),
@@ -63,10 +63,10 @@ export default function Registo() {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.error || 'Erro ao registar');
+                throw new Error(data.error || 'Error registering');
             }
 
-            setSuccess('Conta criada com sucesso! A redirecionar...');
+            setSuccess('Account created successfully! Redirecting...');
             
             setTimeout(() => {
                 router.push('/login')
@@ -81,21 +81,21 @@ export default function Registo() {
     return (
         <div className="window-card">
             <h1>
-                Criar Conta
+                Create Account
             </h1>
 
             <br/>
 
             <form onSubmit={handleSubmit} className="user-form">
                 <div>
-                    <label htmlFor="nome">Nome</label>
+                    <label htmlFor="username">Username </label>
                     <input
                         type="text"
-                        id="nome"
-                        name="nome"
-                        value={formData.nome}
+                        id="username"
+                        name="username"
+                        value={formData.username}
                         onChange={handleChange}
-                        placeholder="Nome de utilizador"
+                        placeholder="Username"
                     />
                 </div>
 
@@ -122,12 +122,12 @@ export default function Registo() {
                         onChange={handleChange}
                         required
                         minLength={6}
-                        placeholder="Password (minimo 6 caracteres)"
+                        placeholder="Password (minimum 6 characters)"
                     />
                 </div>
 
                 <div>
-                    <label htmlFor="confirmPassword">Confirmar Password <span>*</span></label>
+                    <label htmlFor="confirmPassword">Confirm Password <span>*</span></label>
                     <input
                         type="password"
                         id="confirmPassword"
@@ -136,7 +136,7 @@ export default function Registo() {
                         onChange={handleChange}
                         required
                         minLength={6}
-                        placeholder="Repetir password"
+                        placeholder="Confirm Password"
                     />
                 </div>
 
@@ -158,15 +158,15 @@ export default function Registo() {
 
                 <div>
                     <button type="submit" disabled={loading}>
-                        {loading ? 'A registar...' : 'Criar Conta'}
+                        {loading ? 'Registering...' : 'Create Account'}
                     </button>
                 </div>
             </form>
 
             <div>
                 <p>
-                    Já tem conta?{' '}
-                    <Link href="/login">Entrar aqui</Link>
+                    Already have an account?{' '}
+                    <Link href="/login">Login here</Link>
                 </p>
             </div>
         </div>

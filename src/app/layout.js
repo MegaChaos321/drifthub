@@ -1,11 +1,11 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { AuthProvider, useAuth } from '@/context/AuthContext';
+import { AuthProvider } from '@/context/AuthContext';
 import './globals.css';
 
 export const metadata = {
-  title: 'Meu Forum Sem Nome',
-  description: 'Forum personalizado',
+  title: 'DriftHub',
+  description: 'For those who need a break from browsing.',
 }
 
 export default function RootLayout({ children }) {

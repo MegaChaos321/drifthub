@@ -7,47 +7,47 @@ import TopicActions from "@/components/TopicActions";
 
 export default function Home() {
     const { loading: userLoading, user } = useAuth();
-    const [topicos, setTopicos] = useState([]);
+    const [topics, setTopics] = useState([]);
     const [loadingTopics, setLoadingTopics] = useState(false);
     const [currentPage, setCurrentPage] = useState(0);
     const [limit] = useState(5);
     const [pagination, setPagination] = useState({ total: 0, hasMore: false });
     const [filterValue, setFilterValue] = useState('');
 
-    const fetchTopicos = useCallback(async () => {
+    const fetchTopics = useCallback(async () => {
         setLoadingTopics(true)
         try {
-            const skip = currentPage * limit;
+            const offset = currentPage * limit;
             const params = new URLSearchParams({
                 limit: limit.toString(),
-                skip: skip.toString()
+                offset: offset.toString()
             });
 
             if (filterValue) {
                 params.append('filterValue', filterValue);
             }
 
-            const response = await fetch(`/api/topicos?${params}`);
+            const response = await fetch(`/api/topics?${params}`);
             const data = await response.json();
 
             if (response.ok) {
-                setTopicos(data.topics || []);
+                setTopics(data.topics || []);
                 setPagination(data.pagination || { total: 0, hasMore: false });
             } else {
-                console.error('Erro ao buscar tópicos:', data.error);
-                setTopicos([]);
+                console.error('Error fetching topics:', data.error);
+                setTopics([]);
                 setPagination({ total: 0, hasMore: false });
             }
         } catch (error) {
-            console.error('Erro ao buscar tópicos:', error);
+            console.error('Error fetching topics:', error);
         } finally {
             setLoadingTopics(false);
         }
     }, [currentPage, filterValue, limit]);
 
     useEffect(() => {
-        fetchTopicos();
-    }, [fetchTopicos]);
+        fetchTopics();
+    }, [fetchTopics]);
 
     const handleFilter = () => {
         setCurrentPage(0);
@@ -70,50 +70,50 @@ export default function Home() {
         }
     }
 
-    if (userLoading) return <h1>A carregar...</h1>;
+    if (userLoading) return <h1>Loading...</h1>;
 
     return (
         <div>
-            <h1>Bem vindo ao fórum{user && (<span style={{color: "green"}}>{" "+user.nome}</span>)}!</h1>
+            <h1>Welcome to the forum{user && (<span style={{color: "green"}}>{" "+user.username}</span>)}!</h1>
             <TopicActions
                 filterValue={filterValue}
                 setFilterValue={setFilterValue}
                 handleFilter={handleFilter}
                 handleClearFilter={handleClearFilter}
                 user={user}
-                fetchTopicos={fetchTopicos}
+                fetchTopics={fetchTopics}
                 currentPage={currentPage}
             />
             {loadingTopics ? (
-                <h2>Carregando tópicos...</h2>
+                <h2>Loading topics...</h2>
             ) : (
                 <div>
-                    {topicos.length > 0 ? (
+                    {topics.length > 0 ? (
                         <div> 
-                            {topicos.map((topico) => (
+                            {topics.map((topic) => (
                                 <TopicCard
-                                    key={topico.id}
-                                    topico={topico}
+                                    key={topic.id}
+                                    topic={topic}
                                     user={user}
-                                    fetchTopicos={fetchTopicos}
+                                    fetchTopics={fetchTopics}
                                 />
                             ))}
                         </div>
                     ) : (
-                        <h2>Ainda não foram criados tópicos de discussão...</h2>
+                        <h2>No discussion topics have been created yet...</h2>
                     )}
 
                     {pagination.total > 0 && (
                         <div className="pagination">
                             <div>
-                                Mostrando {currentPage * limit + 1} - {Math.min((currentPage + 1) * limit, pagination.total)} de {pagination.total} tópicos
+                                Displaying {currentPage * limit + 1} - {Math.min((currentPage + 1) * limit, pagination.total)} out of {pagination.total} topics
                             </div>
                                 <div className="paginationButtons">
                                     <button onClick={handlePreviousPage} disabled={currentPage === 0}>
                                         ⬅
                                     </button>
                                     <span>
-                                        Página {currentPage + 1}
+                                        Page {currentPage + 1}
                                     </span>
                                     <button onClick={handleNextPage} disabled={!pagination.hasMore}>
                                         ➞

@@ -9,16 +9,16 @@ export default function Navbar(){
     return(
         <nav className="navbar">
             <div className="navbar-content">
-                <button><Link href="/">Página Inicial</Link></button>
+                <button><Link href="/">Homepage</Link></button>
             </div>
             {!loading && (
                 <div className="navbar-content">
                 {user ? (
-                    <button onClick={logout}><span>Sair</span></button>
+                    <button onClick={logout}><span>Logout</span></button>
                 ): (
                     <>
-                        <button><Link href="/login">Entrar</Link></button>
-                        <button><Link href="/registo">Registar</Link></button>
+                        <button><Link href="/login">Login</Link></button>
+                        <button><Link href="/register">Register</Link></button>
                     </>
                 )}
             </div>

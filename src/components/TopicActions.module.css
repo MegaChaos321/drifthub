@@ -39,34 +39,34 @@
     cursor: pointer;
 }
 
-.botaoFiltrar{
+.filterButton{
     background: rgb(62, 62, 62);
     color: white;
     transition: background ease 0.2s;
     border-color: white;
 }
 
-.botaoFiltrar:hover{
+.filterButton:hover{
     background: rgb(90, 90, 90);
 }
 
-.botaoLimpar{
+.clearButton{
     background: rgb(238, 238, 238);
     color: black;
     transition: background ease 0.2s;
 }
 
-.botaoLimpar:hover{
+.clearButton:hover{
     background: rgb(210, 210, 210);
 }
 
-.botaoCriar{
+.createButton{
     margin-left: auto;
     color: white;
     transition: color ease 0.2s;
 }
 
-.botaoCriar:hover{
+.createButton:hover{
     opacity: 0.9;
 }
 
@@ -76,39 +76,39 @@
     margin-right: auto;
 }
 
-.topicoFormulario{
+.topicForm{
     font-size: large;
 }
 
-.topicoFormulario label{
+.topicForm label{
     width: 100px;
     margin-right: 15px;
 }
 
-.topicoFormulario label > span{
+.topicForm label > span{
   color: red;
 }
 
-.topicoFormulario > div{
+.topicForm > div{
     margin-bottom: 15px;
     display: flex;
     align-items: center;
 }
 
-.topicoFormulario input{
+.topicForm input{
     border-radius: 10px;
     padding: 5px 10px;
     flex: 1;
 }
 
-.topicoFormulario textarea{
+.topicForm textarea{
     border-radius: 10px;
     padding: 5px 10px;
     flex: 1;
     resize: vertical;
 }
 
-.topicoFormulario button{
+.topicForm button{
     width: 80px;
     border-radius: 10px;
     padding: 5px;
@@ -119,7 +119,7 @@
     transition: background ease 0.2s;
 }
 
-.topicoFormulario button:hover{
+.topicForm button:hover{
     background: rgb(8, 198, 8);
     cursor: pointer;
 }

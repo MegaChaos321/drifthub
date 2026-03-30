@@ -23,7 +23,7 @@
     margin-right: 5px;
 }
 
-.data{
+.date{
     margin-right: 10px;
 }
 
@@ -31,7 +31,7 @@
     font-size: small;
 }
 
-.botaoApagar{
+.deleteButton{
     height: 30px;
     width: 30px;
     padding: 2px;
@@ -41,12 +41,12 @@
     margin-right: 5px;
 }
 
-.botaoApagar:hover{
+.deleteButton:hover{
     cursor: pointer;
     background: rgb(180, 7, 7);
 }
 
-.botaoEditar{
+.editButton{
     height: 30px;
     width: 30px;
     padding: 2px;
@@ -56,7 +56,7 @@
     margin-right: 5px;
 }
 
-.botaoEditar:hover{
+.editButton:hover{
     cursor: pointer;
     background: grey;
 }

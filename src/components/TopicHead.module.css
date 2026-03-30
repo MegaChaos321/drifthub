@@ -44,16 +44,16 @@
     font-weight: bold;
 }
 
-.data{
+.date{
     margin-right: 15px;
 }
 
-.comentarioFormulario > div{
+.commentForm > div{
     margin-bottom: 15px;
     display: flex;
 }
 
-.comentarioFormulario textarea{
+.commentForm textarea{
     background: rgb(65, 63, 63);
     color: white;
     border-radius: 10px;
@@ -64,12 +64,12 @@
     resize: vertical;
 }
 
-.comentarioFormulario textarea::placeholder{
+.commentForm textarea::placeholder{
     color: white;
     opacity: 0.7;
 }
 
-.comentarioFormulario button{
+.commentForm button{
     width: 80px;
     border: 1px solid white;
     border-radius: 10px;
@@ -81,7 +81,7 @@
     transition: background ease 0.2s;
 }
 
-.comentarioFormulario button:hover{
+.commentForm button:hover{
     background: rgb(8, 198, 8);
     cursor: pointer;
 }

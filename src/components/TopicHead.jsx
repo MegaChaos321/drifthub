@@ -5,13 +5,13 @@ import styles from "./TopicHead.module.css";
 
 export default function TopicHead(props){
     const [createComment, setCreateComment] = useState(false);
-    const [texto, setTexto ] = useState("");
+    const [text, setText ] = useState("");
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
     const toggleCreateComment = () => {
         setError('');
-        setTexto("");
+        setText("");
         setCreateComment(!createComment);
     }
 
@@ -33,28 +33,27 @@ export default function TopicHead(props){
         setLoading(true);
 
         try {
-            const response = await fetch('/api/comentarios', {
+            const response = await fetch('/api/comments', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    topicId: props.topico.id,
-                    texto: texto,
-                    userId: props.user.id,
-                    nome: props.user.nome
+                    topicID: props.topic.id,
+                    text: text,
+                    userID: props.user.id
                 }),
             });
 
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.error || 'Erro ao criar comentário');
+                throw new Error(data.error || 'Error creating comment');
             }
 
-            setTexto("");
+            setText("");
             setCreateComment(false);
-            props.fetchComentarios(true);
+            props.fetchComments(true);
         } catch (err) {
             setError(err.message);
         } finally {
@@ -62,41 +61,41 @@ export default function TopicHead(props){
         }
     }
 
-    if (!props.topico) return <h1>A carregar...</h1>;
+    if (!props.topic) return <h1>Loading...</h1>;
 
     return (
         <div className={styles.topicSection}>
             <div>
-                <h1>{props.topico.titulo}</h1>
+                <h1>{props.topic.title}</h1>
             </div>
-            {props.topico.conteudo && (
+            {props.topic.content && (
                 <div className={styles.topicBody}>
-                    <h2>{props.topico.conteudo}</h2>
+                    <h2>{props.topic.content}</h2>
                 </div>
             )}
             <div className={styles.topicFooter}>
                 <div>
                     <span className={styles.comments}>💬{props.commentCount}</span>
-                    <span className={styles.data}>{formatDate(props.topico.createdAt)}</span>
-                    <span>Por: <span style={{color: "rgb(17, 216, 17)", fontWeight: "bold"}}>{props.topico.autor.nome}</span></span>
+                    <span className={styles.date}>{formatDate(props.topic.createdAt)}</span>
+                    <span>By: <span style={{color: "rgb(17, 216, 17)", fontWeight: "bold"}}>{props.topic.username}</span></span>
                 </div>
                 {props.user && (
                     <button onClick={toggleCreateComment}>
-                        {createComment ? "Cancelar" : "Comentar"}
+                        {createComment ? "Cancel" : "Comment"}
                     </button>
                 )}
             </div>
             {(createComment && props.user) && (
                 <div>
-                    <form className={styles.comentarioFormulario} onSubmit={handleSubmit}>
+                    <form className={styles.commentForm} onSubmit={handleSubmit}>
                         <div>
                             <textarea
-                                id="comentario"
+                                id="comment"
                                 rows="4"
-                                value={texto}
-                                onChange={(e) => setTexto(e.target.value)}
+                                value={text}
+                                onChange={(e) => setText(e.target.value)}
                                 required
-                                placeholder="Escreva comentário aqui..."
+                                placeholder="Write comment here..."
                             >
                             </textarea>
                         </div>
@@ -111,7 +110,7 @@ export default function TopicHead(props){
 
                         <div>
                             <button type="submit"  disabled={loading}>
-                                {loading ? 'Aguarde...' : 'Submeter'}
+                                {loading ? 'Wait...' : 'Submit'}
                             </button>
                         </div>
                     </form>

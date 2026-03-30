@@ -20,7 +20,7 @@ export function AuthProvider({ children }) {
         setUser(null);
       }
     }
-
+    
     setLoading(false);
   }, []);
 

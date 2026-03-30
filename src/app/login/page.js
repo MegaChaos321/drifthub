@@ -22,7 +22,7 @@ export default function Login() {
     }, [userLoading, user, router]);
 
     if (userLoading || user) {
-        return <h1>A carregar...</h1>;
+        return <h1>Loading...</h1>;
     }
 
     const handleChange = (e) => {
@@ -48,7 +48,7 @@ export default function Login() {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.error || 'Erro ao fazer login')
+                throw new Error(data.error || 'Error logging in')
             };
 
             login(data.user);
@@ -63,7 +63,7 @@ export default function Login() {
     return (
         <div className="window-card">
             <h1>
-                Entrar
+                Login
             </h1>
 
             <br/>
@@ -105,15 +105,15 @@ export default function Login() {
 
                 <div>
                     <button type="submit" disabled={loading}>
-                        {loading ? 'A entrar...' : 'Entrar'}
+                        {loading ? 'Logging in...' : 'Login'}
                     </button>
                 </div>
             </form>
 
             <div>
                 <p>
-                    Não tem conta?{' '}
-                    <Link href="/registo">Criar conta</Link>
+                    Don't have an account?{' '}
+                    <Link href="/register">Create account</Link>
                 </p>
             </div>
         </div>

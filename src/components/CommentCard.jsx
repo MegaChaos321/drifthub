@@ -5,40 +5,40 @@ import styles from "./CommentCard.module.css";
 
 export default function CommentCard(props){
     const [isEdit, setIsEdit] = useState(false);
-    const [wasEdited, setWasEdited] = useState(new Date(props.comentario.updatedAt) > new Date(props.comentario.createdAt));
-    const [texto, setTexto] = useState("");
-    const [maskedTexto, setMaskedTexto] = useState(props.comentario.texto);
+    const [wasEdited, setWasEdited] = useState(new Date(props.comment.updatedAt) > new Date(props.comment.createdAt));
+    const [text, setText] = useState("");
+    const [maskedText, setMaskedText] = useState(props.comment.text);
     const [editError, setEditError] = useState('');
     const [editLoading, setEditLoading] = useState(false);
     const [deletingCommentId, setDeletingCommentId] = useState(null);
 
     const handleDelete = async () => {
-        if (!confirm('Tem a certeza que deseja eliminar este comentário?')) {
+        if (!confirm('Are you sure you want to delete this comment?')) {
             return;
         }
 
-        setDeletingCommentId(props.comentario.id)
+        setDeletingCommentId(props.comment.id)
         try {
-            const response = await fetch(`/api/comentarios/${props.comentario.id}`, {
+            const response = await fetch(`/api/comments/${props.comment.id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    topicId: props.topicId,
-                    userId: props.user.id
+                    userID: props.user.id,
+                    role: props.user.role
                 })
             });
 
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.error || 'Erro ao eliminar comentário');
+                throw new Error(data.error || 'Error deleting comment');
             }
 
-            props.fetchComentarios(true);
+            props.fetchComments(true);
         } catch (error) {
-            alert('Erro ao eliminar comentário: ' + error.message);
+            alert('Error deleting comment: ' + error.message);
         } finally {
             setDeletingCommentId(null);
         }
@@ -49,7 +49,7 @@ export default function CommentCard(props){
     }
 
     const handleEdit = () => {
-        if (!isEdit) setTexto(maskedTexto);
+        if (!isEdit) setText(maskedText);
         setEditError('');
         toggleIsEdit();
     }
@@ -60,30 +60,31 @@ export default function CommentCard(props){
         setEditLoading(true);
 
         try {
-            if (texto === maskedTexto) {
-                setEditError('Nenhuma alteração foi feita')
+            if (text === maskedText) {
+                setEditError('No change was made')
                 setEditLoading(false)
                 return
             }
 
-            const response = await fetch(`/api/comentarios/${props.comentario.id}`, {
+            const response = await fetch(`/api/comments/${props.comment.id}`, {
                 method: 'PUT',
                 headers: {
                 'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    userId: props.user.id,
-                    texto: texto
+                    userID: props.user.id,
+                    role: props.user.role,
+                    text: text
                 })
             })
 
             const data = await response.json()
 
             if (!response.ok) {
-                throw new Error(data.error || 'Erro ao atualizar comentário')
+                throw new Error(data.error || 'Error updating comment')
             }
 
-            setMaskedTexto(texto);
+            setMaskedText(text);
             setWasEdited(true);
             handleEdit();
         } catch (error) {
@@ -97,39 +98,39 @@ export default function CommentCard(props){
         if (!dateString) return 'N/A';
         const date = new Date(dateString);
 
-        const dia = String(date.getDate()).padStart(2, '0');
-        const mes = String(date.getMonth() + 1).padStart(2, '0');
-        const ano = date.getFullYear();
-        const horas = String(date.getHours()).padStart(2, '0');
-        const minutos = String(date.getMinutes()).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        const hour = String(date.getHours()).padStart(2, '0');
+        const minute = String(date.getMinutes()).padStart(2, '0');
 
-        return `${horas}:${minutos}, ${dia}/${mes}/${ano}`;
+        return `${hour}:${minute}, ${day}/${month}/${year}`;
     }
 
     return (
         <div className={styles.commentSection}>
             <div className={styles.commentHeader}>
                 <div>
-                    <span className={styles.user}>Por: <span style={{color: "rgb(17, 216, 17)", fontWeight: "bold"}}>{props.comentario.autor.nome}</span></span>
-                    <span className={styles.data}> às {formatDate(props.comentario.createdAt)}</span>
+                    <span className={styles.user}>By: <span style={{color: "rgb(17, 216, 17)", fontWeight: "bold"}}>{props.comment.username}</span></span>
+                    <span className={styles.date}> at {formatDate(props.comment.createdAt)}</span>
                     {wasEdited && (
                         <span className={styles.edited}><i>[edited]</i></span>
                     )}
                 </div>
-                {(props.user && String(props.comentario.autor.id) === String(props.user.id)) && (
+                {(props.user && String(props.comment.userID) === String(props.user.id)) && (
                     <div>
                         <button
                             onClick={handleEdit}
-                            className={styles.botaoEditar}
+                            className={styles.editButton}
                         >
                             {isEdit ? '❌' : '✏️'}
                         </button>
                         <button
                             onClick={handleDelete}
-                            disabled={deletingCommentId === props.comentario.id}
-                            className={styles.botaoApagar}
+                            disabled={deletingCommentId === props.comment.id}
+                            className={styles.deleteButton}
                         >
-                            {deletingCommentId === props.comentario.id ? '⏳' : '🗑️'}
+                            {deletingCommentId === props.comment.id ? '⏳' : '🗑️'}
                         </button>
                     </div>
                 )}
@@ -140,13 +141,13 @@ export default function CommentCard(props){
                         <form className={styles.editForm}>
                             <div>
                                 <textarea
-                                    id="comentario"
-                                    name="comentario"
+                                    id="comment"
+                                    name="comment"
                                     rows="3"
-                                    value={texto}
-                                    onChange={(e) => setTexto(e.target.value)}
+                                    value={text}
+                                    onChange={(e) => setText(e.target.value)}
                                     required
-                                    placeholder="Editando comentário..."
+                                    placeholder="Editing comment..."
                                 >
                                 </textarea>
                             </div>
@@ -164,13 +165,13 @@ export default function CommentCard(props){
                                     onClick={handleEditSubmit}
                                     disabled={editLoading}
                                 >
-                                    {editLoading ? "A guardar..." : "Guardar"}
+                                    {editLoading ? "Saving..." : "Save"}
                                 </button>
                             </div>
                         </form>
                     </div>
                 ) : (
-                    <p>{maskedTexto}</p>
+                    <p>{maskedText}</p>
                 )}
             </div>
             <hr/>

@@ -8,31 +8,32 @@ export default function TopicCard(props){
     const [deletingTopicId, setDeletingTopicId] = useState(null);
 
     const handleDelete = async () => {
-        if (!confirm('Tem a certeza que deseja eliminar este tópico?')) {
+        if (!confirm('Are you sure you want to delete this topic?')) {
             return;
         }
 
-        setDeletingTopicId(props.topico.id)
+        setDeletingTopicId(props.topic.id)
         try {
-            const response = await fetch(`/api/topicos/${props.topico.id}`, {
+            const response = await fetch(`/api/topics/${props.topic.id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    userId: props.user.id
+                    userID: props.user.id,
+                    role: props.user.role
                 })
             });
 
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.error || 'Erro ao eliminar tópico');
+                throw new Error(data.error || 'Error deleting topic');
             }
 
-            props.fetchTopicos();
+            props.fetchTopics();
         } catch (error) {
-            alert('Erro ao eliminar tópico: ' + error.message);
+            alert('Error deleting topic: ' + error.message);
         } finally {
             setDeletingTopicId(null);
         }
@@ -59,27 +60,27 @@ export default function TopicCard(props){
 
     return (
         <div className={styles.topicCard}>
-            <Link className={styles.topicLink} href={"/topic/"+props.topico.id}>
+            <Link className={styles.topicLink} href={"/topic/"+props.topic.id}>
                 <div className={styles.cardHeader}>
-                    <h2>{props.topico.titulo}</h2>
-                    {(props.user && String(props.topico.autor.id) === String(props.user.id)) && (
+                    <h2>{props.topic.title}</h2>
+                    {(props.user && String(props.topic.userID) === String(props.user.id)) && (
                         <button
                             onClick={handleDeleteClick}
-                            disabled={deletingTopicId === props.topico.id}
+                            disabled={deletingTopicId === props.topic.id}
                         >
-                            {deletingTopicId === props.topico.id ? '⏳' : '🗑️'}
+                            {deletingTopicId === props.topic.id ? '⏳' : '🗑️'}
                         </button>
                     )}
                 </div>
             </Link>
             <hr/>
             <div className={styles.cardBody}>
-                <p>{props.topico.conteudo}</p>
+                <p>{props.topic.content}</p>
             </div>
             <div className={styles.cardFooter}>
-                <span className={styles.comments}>💬{props.topico.commentCount}</span>
-                <span className={styles.data}>{formatDate(props.topico.createdAt)}</span>
-                <span>Por: <span style={{color: "rgb(17, 216, 17)", fontWeight: "bold"}}>{props.topico.autor.nome}</span></span>
+                <span className={styles.comments}>💬{props.topic.commentCount}</span>
+                <span className={styles.date}>{formatDate(props.topic.createdAt)}</span>
+                <span>By: <span style={{color: "rgb(17, 216, 17)", fontWeight: "bold"}}>{props.topic.username}</span></span>
             </div>
         </div>
     );
