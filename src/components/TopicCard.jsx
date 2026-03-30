@@ -14,15 +14,14 @@ export default function TopicCard(props){
 
         setDeletingTopicId(props.topic.id)
         try {
+            const token = localStorage.getItem('token');
+
             const response = await fetch(`/api/topics/${props.topic.id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({
-                    userID: props.user.id,
-                    role: props.user.role
-                })
             });
 
             const data = await response.json();

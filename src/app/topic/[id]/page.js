@@ -39,15 +39,23 @@ export default function Topic(){
     const fetchComments = useCallback(async (isReset = false) => {
         setLoadingComments(true);
         try {
+            const token = localStorage.getItem('token');
             const offsetValue = (isReset || currentFetch === 0) ? 0 : currentFetch * limit;
+
+            const headers = { 'Content-Type': 'application/json' };
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
             
             const params = new URLSearchParams({
                 limit: limit.toString(),
-                offset: offsetValue.toString(),
-                userID: user ? user.id : ''
+                offset: offsetValue.toString()
             });
 
-            const response = await fetch(`/api/topics/${id}/comments?${params}`);
+            const response = await fetch(`/api/topics/${id}/comments?${params}`, {
+                method: 'GET',
+                headers
+            })
             const data = await response.json();
 
             if (response.ok) {

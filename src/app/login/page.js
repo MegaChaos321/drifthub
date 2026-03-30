@@ -51,7 +51,7 @@ export default function Login() {
                 throw new Error(data.error || 'Error logging in')
             };
 
-            login(data.user);
+            login(data.token);
             router.push('/');
         } catch (err) {
             setError(err.message);

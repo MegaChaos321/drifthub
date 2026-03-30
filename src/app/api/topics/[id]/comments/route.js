@@ -1,10 +1,12 @@
 import { NextResponse } from 'next/server';
 import clientPool from '@/lib/db'
+import { verifyAuth } from '@/lib/auth';
 import { validate as uuidValidate } from 'uuid';
 
 export async function GET(request, { params }) {
     try {
         const { id } = await params;
+        let userID = null;
 
         if (!id || !uuidValidate(id)) {
             return NextResponse.json(
@@ -13,10 +15,12 @@ export async function GET(request, { params }) {
             );
         }
 
-        const { searchParams } = new URL(request.url);
-        const limit = parseInt(searchParams.get('limit') || '10');
-        const offset = parseInt(searchParams.get('offset') || '0');
-        const userID = searchParams.get('userID') || null;
+        try {
+            const user = await verifyAuth(request);
+            userID = user.id;
+        } catch {
+            userID = null;
+        }
 
         if (userID && !uuidValidate(userID)) {
             return NextResponse.json(
@@ -24,6 +28,10 @@ export async function GET(request, { params }) {
                 { status: 400 }
             );
         }
+
+        const { searchParams } = new URL(request.url);
+        const limit = parseInt(searchParams.get('limit') || '10');
+        const offset = parseInt(searchParams.get('offset') || '0');
 
         const [result] = await clientPool.query('CALL get_topic_comments(?, ?, ?, ?)', [
             id,

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import clientPool from '@/lib/db'
+import { verifyAuth } from '@/lib/auth';
 import { validate as uuidValidate } from 'uuid';
 
 export async function GET(request) {
@@ -53,7 +54,8 @@ export async function GET(request) {
 
 export async function POST(request) {
     try {
-        const { title, content, userID } = await request.json();
+        const user = await verifyAuth(request);
+        const { title, content } = await request.json();
 
         if(!title || title.trim() == ''){
             return NextResponse.json(
@@ -62,7 +64,7 @@ export async function POST(request) {
             );
         }
 
-        if (!userID || !uuidValidate(userID)) {
+        if (!uuidValidate(user.id)) {
             return NextResponse.json(
                 { error: 'Invalid user ID' },
                 { status: 400 }
@@ -70,7 +72,7 @@ export async function POST(request) {
         }
 
         const [result] = await clientPool.query('CALL create_topic(?, ?, ?)', [
-            userID,
+            user.id,
             title,
             content
         ]);
@@ -86,6 +88,14 @@ export async function POST(request) {
 
     } catch (error) {
         console.error('Error creating topic:', error);
+
+        if (error.message === 'Unauthorized' || error.message === 'Invalid token') {
+            return NextResponse.json(
+                { error: 'Unauthorized access' },
+                { status: 401 }
+            );
+        }
+        
         return NextResponse.json(
             { error: 'Internal server error. Please try again.' },
             { status: 500 }

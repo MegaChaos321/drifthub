@@ -19,15 +19,14 @@ export default function CommentCard(props){
 
         setDeletingCommentId(props.comment.id)
         try {
+            const token = localStorage.getItem('token');
+
             const response = await fetch(`/api/comments/${props.comment.id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({
-                    userID: props.user.id,
-                    role: props.user.role
-                })
             });
 
             const data = await response.json();
@@ -66,14 +65,15 @@ export default function CommentCard(props){
                 return
             }
 
+            const token = localStorage.getItem('token');
+
             const response = await fetch(`/api/comments/${props.comment.id}`, {
                 method: 'PUT',
                 headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
-                    userID: props.user.id,
-                    role: props.user.role,
                     text: text
                 })
             })

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import clientPool from '@/lib/db'
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 export async function POST(request) {
     try {
@@ -9,10 +10,7 @@ export async function POST(request) {
         const email = body.email?.trim().toLowerCase();
 
         if (!email || !password) {
-        return NextResponse.json(
-            { error: 'Email and password are required' },
-            { status: 400 }
-        );
+            return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
         }
 
         const [rows] = await clientPool.query(
@@ -22,31 +20,26 @@ export async function POST(request) {
 
         const user = rows[0];
 
-        if (!user) {
-        return NextResponse.json(
-                { error: 'Incorrect email or password' },
-                { status: 401 }
-            );
+        if (!user || !(await bcrypt.compare(password, user.password))) {
+            return NextResponse.json({ error: 'Incorrect email or password' }, { status: 401 });
         }
 
-        const isPasswordValid = await bcrypt.compare(password, user.password)
+        const tokenPayload = {
+            id: user.id,
+            username: user.username,
+            role: user.role
+        };
 
-        if (!isPasswordValid) {
-        return NextResponse.json(
-                { error: 'Incorrect email or password' },
-                { status: 401 }
-            );
-        }
+        const token = jwt.sign(
+            tokenPayload,
+            process.env.JWT_SECRET,
+            { expiresIn: '8h' }
+        );
 
         return NextResponse.json(
             { 
                 message: 'Login was successful!',
-                user: {
-                    id: user.id,
-                    email: user.email,
-                    username: user.username,
-                    role: user.role
-                }
+                token
             },
             { status: 200 }
         );

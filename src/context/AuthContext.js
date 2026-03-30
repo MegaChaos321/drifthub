@@ -1,44 +1,49 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useState, useEffect, useContext } from 'react';
+import { jwtDecode } from 'jwt-decode';
 
-const AuthContext = createContext();
+const AuthContext = createContext({});
 
-export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+export const AuthProvider = ({ children }) => {
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    
-    if (storedUser) {
-      try {
-        const userData = JSON.parse(storedUser);
-        setUser(userData);
-      } catch (error) {
-        localStorage.removeItem('user');
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        
+        if (token) {
+            try {
+                const decoded = jwtDecode(token);
+
+                if (decoded.exp * 1000 > Date.now()) {
+                    setUser(decoded); 
+                } else {
+                    logout();
+                }
+            } catch (error) {
+                logout();
+            }
+        }
+        setLoading(false);
+    }, []);
+
+    const login = (token) => {
+        localStorage.setItem('token', token);
+        const decoded = jwtDecode(token);
+        setUser(decoded);
+    };
+
+    const logout = () => {
+        localStorage.removeItem('token');
         setUser(null);
-      }
-    }
-    
-    setLoading(false);
-  }, []);
+    };
 
-  const login = (userData) => {
-    localStorage.setItem('user', JSON.stringify(userData));
-    setUser(userData);
-  }
-
-  const logout = () => {
-    localStorage.removeItem('user');
-    setUser(null);
-  }
-
-  return (
-    <AuthContext.Provider value={{ loading, user, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
-}
+    return (
+        <AuthContext.Provider value={{ user, login, logout, loading }}>
+            {children}
+        </AuthContext.Provider>
+    );
+};
 
 export const useAuth = () => useContext(AuthContext)

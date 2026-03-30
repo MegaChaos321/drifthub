@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import clientPool from '@/lib/db'
+import { verifyAuth } from '@/lib/auth';
 import { validate as uuidValidate } from 'uuid';
 
 export async function GET(request, { params }) {
@@ -51,7 +52,7 @@ export async function GET(request, { params }) {
 export async function DELETE(request, { params }) {
     try {
         const { id } = await params;
-        const { userID, role } = await request.json();
+        const user = await verifyAuth(request);
 
         if (!id || !uuidValidate(id)) {
             return NextResponse.json(
@@ -60,14 +61,14 @@ export async function DELETE(request, { params }) {
             );
         }
 
-        if (!userID || !uuidValidate(userID)) {
+        if (!uuidValidate(user.id)) {
             return NextResponse.json(
                 { error: 'Invalid user ID' },
                 { status: 400 }
             );
         }
 
-        if(!role || !['User', 'Administrator'].includes(role)) {
+        if(!['User', 'Administrator'].includes(user.role)) {
             return NextResponse.json(
                 { error: 'Role unknown' },
                 { status: 400 }
@@ -76,8 +77,8 @@ export async function DELETE(request, { params }) {
 
         const [result] = await clientPool.query('CALL soft_delete_topic(?, ?, ?)', [
             id,
-            userID,
-            role
+            user.id,
+            user.role
         ]);
         const { status } = result[0][0];
         
@@ -103,6 +104,14 @@ export async function DELETE(request, { params }) {
         );
     } catch (error) {
         console.error('Error removing topic:', error);
+
+        if (error.message === 'Unauthorized' || error.message === 'Invalid token') {
+            return NextResponse.json(
+                { error: 'Unauthorized access' },
+                { status: 401 }
+            );
+        }
+
         return NextResponse.json(
             { error: 'Internal server error. Please try again.' },
             { status: 500 }
@@ -113,7 +122,8 @@ export async function DELETE(request, { params }) {
 export async function PUT(request, { params }) {
     try {
         const { id } = await params;
-        const { userID, role, title, content } = await request.json();
+        const user = await verifyAuth(request);
+        const { title, content } = await request.json();
 
         if(!title || title.trim() == ''){
             return NextResponse.json(
@@ -129,14 +139,14 @@ export async function PUT(request, { params }) {
             );
         }
 
-        if (!userID || !uuidValidate(userID)) {
+        if (!uuidValidate(user.id)) {
             return NextResponse.json(
                 { error: 'Invalid user ID' },
                 { status: 400 }
             );
         }
 
-        if(!role || !['User', 'Administrator'].includes(role)) {
+        if(!['User', 'Administrator'].includes(user.role)) {
             return NextResponse.json(
                 { error: 'Role unknown' },
                 { status: 400 }
@@ -145,8 +155,8 @@ export async function PUT(request, { params }) {
 
         const [result] = await clientPool.query('CALL update_topic(?, ?, ?, ?, ?)', [
             id,
-            userID,
-            role,
+            user.id,
+            user.role,
             title,
             content
         ]);
@@ -174,6 +184,14 @@ export async function PUT(request, { params }) {
         );
     } catch (error) {
         console.error('Error updating topic:', error);
+
+        if (error.message === 'Unauthorized' || error.message === 'Invalid token') {
+            return NextResponse.json(
+                { error: 'Unauthorized access' },
+                { status: 401 }
+            );
+        }
+
         return NextResponse.json(
             { error: 'Internal server error. Please try again.' },
             { status: 500 }
