@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from 'next/navigation';
 import styles from "./TopicCard.module.css";
 
 export default function TopicCard(props){
+    const router = useRouter();
     const [deletingTopicId, setDeletingTopicId] = useState(null);
 
     const handleDelete = async () => {
@@ -59,23 +61,29 @@ export default function TopicCard(props){
 
     return (
         <div className={styles.topicCard}>
-            <Link className={styles.topicLink} href={"/topic/"+props.topic.id}>
-                <div className={styles.cardHeader}>
+            <div className={styles.cardHeader}>
+                <Link className={styles.topicLink} href={"/topic/" + props.topic.id}>
                     <h2>{props.topic.title}</h2>
-                    {(props.user && String(props.topic.userID) === String(props.user.id)) && (
-                        <button
-                            onClick={handleDeleteClick}
-                            disabled={deletingTopicId === props.topic.id}
-                        >
+                </Link>
+
+                {(props.user && String(props.topic.userID) === String(props.user.id)) && (
+                    <div className={styles.actions}>
+                        <button onClick={() => router.push(`/topic/${props.topic.id}?edit=true`)} className={styles.editButton}>
+                            ✏️
+                        </button>
+                        <button onClick={handleDeleteClick} className={styles.deleteButton}>
                             {deletingTopicId === props.topic.id ? '⏳' : '🗑️'}
                         </button>
-                    )}
-                </div>
-            </Link>
+                    </div>
+                )}
+            </div>
+
             <hr/>
+
             <div className={styles.cardBody}>
                 <p>{props.topic.content}</p>
             </div>
+
             <div className={styles.cardFooter}>
                 <span className={styles.comments}>💬{props.topic.commentCount}</span>
                 <span className={styles.date}>{formatDate(props.topic.createdAt)}</span>

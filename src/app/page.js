@@ -12,7 +12,8 @@ export default function Home() {
     const [currentPage, setCurrentPage] = useState(0);
     const [limit] = useState(5);
     const [pagination, setPagination] = useState({ total: 0, hasMore: false });
-    const [filterValue, setFilterValue] = useState('');
+    const [searchValue, setSearchValue] = useState('');
+    const [order, setOrder] = useState("DESC");
 
     const fetchTopics = useCallback(async () => {
         setLoadingTopics(true)
@@ -20,11 +21,12 @@ export default function Home() {
             const offset = currentPage * limit;
             const params = new URLSearchParams({
                 limit: limit.toString(),
-                offset: offset.toString()
+                offset: offset.toString(),
+                sort: order
             });
 
-            if (filterValue) {
-                params.append('filterValue', filterValue);
+            if (searchValue) {
+                params.append('filterValue', searchValue);
             }
 
             const response = await fetch(`/api/topics?${params}`);
@@ -43,18 +45,18 @@ export default function Home() {
         } finally {
             setLoadingTopics(false);
         }
-    }, [currentPage, filterValue, limit]);
+    }, [currentPage, searchValue, limit, order]);
 
     useEffect(() => {
         fetchTopics();
     }, [fetchTopics]);
 
-    const handleFilter = () => {
+    const handleSearch = () => {
         setCurrentPage(0);
     }
 
-    const handleClearFilter = () => {
-        setFilterValue('');
+    const handleClearSearch = () => {
+        setSearchValue('');
         setCurrentPage(0);
     }
 
@@ -76,10 +78,12 @@ export default function Home() {
         <div>
             <h1>Welcome to the forum{user && (<span style={{color: "green"}}>{" "+user.username}</span>)}!</h1>
             <TopicActions
-                filterValue={filterValue}
-                setFilterValue={setFilterValue}
-                handleFilter={handleFilter}
-                handleClearFilter={handleClearFilter}
+                searchValue={searchValue}
+                setSearchValue={setSearchValue}
+                handleSearch={handleSearch}
+                handleClearSearch={handleClearSearch}
+                order={order}
+                setOrder={setOrder}
                 user={user}
                 fetchTopics={fetchTopics}
                 currentPage={currentPage}

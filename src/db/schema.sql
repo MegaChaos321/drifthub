@@ -13,7 +13,7 @@ CREATE TABLE users(
     `password` VARCHAR(255) NOT NULL,
     `role` ENUM('User', 'Administrator') DEFAULT 'User',
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
-    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
     isDeleted TINYINT DEFAULT 0,
     deletedAt TIMESTAMP NULL DEFAULT NULL,
     CONSTRAINT chk_email CHECK (email REGEXP('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'))
@@ -146,6 +146,10 @@ BEGIN
         SET NEW.deletedAt = NOW();
     ELSEIF NEW.isDeleted = 0 AND OLD.isDeleted = 1 THEN
         SET NEW.deletedAt = NULL;
+    END IF;
+    
+    IF NEW.body <> OLD.body THEN
+        SET NEW.updatedAt = NOW();
     END IF;
 END //
 DELIMITER ;

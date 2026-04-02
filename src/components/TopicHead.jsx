@@ -4,15 +4,86 @@ import { useState } from "react";
 import styles from "./TopicHead.module.css";
 
 export default function TopicHead(props){
+    const [isEdit, setIsEdit] = useState(props.shouldEdit);
+    const [maskedFormData, setMaskedFormData] = useState({
+        title: props.topic?.title || "",
+        content: props.topic?.content || ""
+    });
+    const [formData, setFormData] = useState(maskedFormData);
+    const [editError, setEditError] = useState('');
+    const [editLoading, setEditLoading] = useState(false);
     const [createComment, setCreateComment] = useState(false);
     const [text, setText ] = useState("");
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
+    const toggleIsEdit = () => {
+        if (props.shouldEdit) props.router.push('/');
+        setIsEdit(!isEdit);
+        if (createComment) setCreateComment(false);
+        if (props.editingId) props.setEditingId(null);
+    }
+
+    const handleEdit = () => {
+        if (!isEdit) setFormData(maskedFormData);
+        setEditError('');
+        toggleIsEdit();
+    }
+    
+    const handleEditSubmit = async (e) => {
+        e.preventDefault();
+        setEditError('');
+        setEditLoading(true);
+
+        try {
+            if (formData.title.trim() === "") {
+                setEditError('Title is required')
+                setEditLoading(false)
+                return
+            }
+
+            if (formData.title === maskedFormData.title && formData.content === maskedFormData.content) {
+                setEditError('No changes were made')
+                setEditLoading(false)
+                return
+            }
+
+            const token = localStorage.getItem('token');
+
+            const response = await fetch(`/api/topics/${props.topic.id}`, {
+                method: 'PUT',
+                headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    title: formData.title.trim(),
+                    content: formData.content.trim()
+                })
+            })
+
+            const data = await response.json()
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Error updating topic')
+            }
+
+            setMaskedFormData(formData);
+            handleEdit();
+        } catch (error) {
+            setEditError(error.message);
+        } finally {
+            setEditLoading(false);
+        }
+    }
+
     const toggleCreateComment = () => {
+        if (props.shouldEdit) props.router.push('/');
         setError('');
         setText("");
         setCreateComment(!createComment);
+        if (isEdit) setIsEdit(false);
+        if (props.editingId) props.setEditingId(null);
     }
 
     const formatDate = (dateString) => {
@@ -65,14 +136,67 @@ export default function TopicHead(props){
 
     return (
         <div className={styles.topicSection}>
-            <div>
-                <h1>{props.topic.title}</h1>
+            <div className={styles.topicHead}>
+                {!isEdit ? (
+                    <div>
+                        <h1>{maskedFormData.title}</h1>
+                    </div>
+                ) : (
+                    <input 
+                        className={styles.editTitleInput}
+                        value={formData.title}
+                        onChange={(e) => setFormData({...formData, title: e.target.value})}
+                    />
+                )}
+                
+                {(props.user && String(props.topic.userID) === String(props.user.id)) && (
+                    <button onClick={handleEdit} className={styles.editButton}>
+                        {isEdit ? '❌' : '✏️'}
+                    </button>
+                )}
             </div>
-            {props.topic.content && (
-                <div className={styles.topicBody}>
-                    <h2>{props.topic.content}</h2>
+
+            {isEdit ? (
+                <div className={styles.editForm}>
+                    <div>
+                        <textarea
+                            rows="5"
+                            value={formData.content}
+                            onChange={(e) => setFormData({...formData, content: e.target.value})}
+                        />
+                    </div>
+                    
+                    {editError && (
+                        <div>
+                            <sup className="error-message">
+                                {editError}
+                            </sup>
+                        </div>
+                    )}
+
+                    <div>
+                        <button 
+                            onClick={handleEditSubmit}
+                            disabled={editLoading}
+                        >
+                            {editLoading ? "Saving..." : "Save"}
+                        </button>
+                    </div>
+
+                    <hr/>
                 </div>
+            ) : (
+                maskedFormData.content ? (
+                    <div className={styles.topicBody}>
+                        <h2>{maskedFormData.content}</h2>
+                    </div>
+                ) : (
+                    <div className={styles.editForm}>
+                        <hr/>
+                    </div>
+                )
             )}
+            
             <div className={styles.topicFooter}>
                 <div>
                     <span className={styles.comments}>💬{props.commentCount}</span>

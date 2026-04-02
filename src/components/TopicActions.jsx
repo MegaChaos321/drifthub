@@ -18,7 +18,8 @@ export default function TopicActions(props){
         if (success) {
             const timer = setTimeout(() => {
                 setSuccess('');
-            }, 3000);
+                setCreateForm(false)
+            }, 1000);
 
             return () => clearTimeout(timer);
         }
@@ -26,16 +27,26 @@ export default function TopicActions(props){
 
     useEffect(() => {
         setCreateForm(false);
-    }, [props.currentPage, props.filterValue]);
+    }, [props.currentPage, props.searchValue]);
 
     const handleSearch = () => {
-        props.setFilterValue(search);
-        props.handleFilter();
+        props.setSearchValue(search);
+        props.handleSearch();
     }
 
     const handleClear = () => {
         setSearch("");
-        props.handleClearFilter();
+        props.handleClearSearch();
+    }
+
+    const handleOrder = () => {
+        if(props.order === "DESC"){
+            props.setOrder("ASC");
+        } else {
+            props.setOrder("DESC");
+        }
+
+        props.handleSearch();
     }
 
     const createStyle = {
@@ -105,10 +116,11 @@ export default function TopicActions(props){
                     onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                     placeholder="Search..."
                 />
-                <button className={styles.filterButton} onClick={handleSearch}>Search</button>
+                <button className={styles.searchButton} onClick={handleSearch}>Search</button>
                 {search && (
                     <button className={styles.clearButton} onClick={handleClear}>Clear</button>
                 )}
+                <button className={styles.orderButton} onClick={handleOrder}>{props.order === "DESC" ? "Newest First ⬇" : "Oldest First ⬆"}</button>
                 {props.user && (
                     <button className={styles.createButton} style={createStyle} onClick={toggleCreateForm}>
                         {createForm ? "Close Form" : "Create Topic"}

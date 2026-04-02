@@ -4,15 +4,33 @@ import { useState } from "react";
 import styles from "./CommentCard.module.css";
 
 export default function CommentCard(props){
-    const [isEdit, setIsEdit] = useState(false);
     const [wasEdited, setWasEdited] = useState(new Date(props.comment.updatedAt) > new Date(props.comment.createdAt));
     const [text, setText] = useState("");
     const [maskedText, setMaskedText] = useState(props.comment.text);
     const [editError, setEditError] = useState('');
     const [editLoading, setEditLoading] = useState(false);
     const [deletingCommentId, setDeletingCommentId] = useState(null);
+    const [maskedLike, setMaskedLike] = useState(props.comment.likes);
+    const [maskedDislike, setMaskedDislike] = useState(props.comment.dislikes);
+    const [maskedReaction, setMaskedReaction] = useState(props.comment.userReaction);
+    const [reactLoading, setReactLoading] = useState(false);
+
+    const likeStyle = {
+        color: maskedReaction === "like" ? "rgb(149, 198, 255)" : "white",
+        transition: "color 0.2s ease"
+    };
+
+    const dislikeStyle = {
+        color: maskedReaction === "dislike" ? "rgb(149, 198, 255)" : "white",
+        transition: "color 0.2s ease"
+    };
 
     const handleDelete = async () => {
+        if (props.shouldEdit) {
+            props.router.push('/');
+            return;
+        };
+
         if (!confirm('Are you sure you want to delete this comment?')) {
             return;
         }
@@ -44,11 +62,16 @@ export default function CommentCard(props){
     }
 
     const toggleIsEdit = () => {
-        setIsEdit(!isEdit);
+        if (props.shouldEdit) props.router.push('/');
+        if (props.editingId === props.comment.id){
+            props.setEditingId(null);
+        } else {
+            props.setEditingId(props.comment.id)
+        }
     }
 
     const handleEdit = () => {
-        if (!isEdit) setText(maskedText);
+        if (!(props.editingId === props.comment.id)) setText(maskedText);
         setEditError('');
         toggleIsEdit();
     }
@@ -59,6 +82,12 @@ export default function CommentCard(props){
         setEditLoading(true);
 
         try {
+            if (text.trim() === "") {
+                setEditError('Text is required')
+                setEditLoading(false)
+                return
+            }
+
             if (text === maskedText) {
                 setEditError('No change was made')
                 setEditLoading(false)
@@ -94,6 +123,63 @@ export default function CommentCard(props){
         }
     }
 
+    const handleReaction = async (reaction) => {
+        setReactLoading(true);
+
+        try {
+            const token = localStorage.getItem('token');
+
+            const response = await fetch(`/api/comments/${props.comment.id}/react`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    type: reaction
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to react');
+            }
+
+            if(data.status === "CREATED") {
+                setMaskedReaction(reaction)
+
+                if(reaction === "like"){
+                    setMaskedLike(maskedLike + 1)
+                } else {
+                    setMaskedDislike(maskedDislike + 1)
+                }
+            } else if(data.status == "REMOVED") {
+                setMaskedReaction(null)
+
+                if(reaction === "like"){
+                    setMaskedLike(maskedLike - 1)
+                } else {
+                    setMaskedDislike(maskedDislike - 1)
+                }
+            } else {
+                setMaskedReaction(reaction)
+
+                if(reaction === "like"){
+                    setMaskedLike(maskedLike + 1)
+                    setMaskedDislike(maskedDislike - 1)
+                } else {
+                    setMaskedLike(maskedLike - 1)
+                    setMaskedDislike(maskedDislike + 1)
+                }
+            }
+        } catch (error) {
+            alert('Failed to react: ' + error.message);
+        } finally {
+            setReactLoading(false);
+        }
+    }
+
     const formatDate = (dateString) => {
         if (!dateString) return 'N/A';
         const date = new Date(dateString);
@@ -123,7 +209,7 @@ export default function CommentCard(props){
                             onClick={handleEdit}
                             className={styles.editButton}
                         >
-                            {isEdit ? '❌' : '✏️'}
+                            {(props.editingId === props.comment.id) ? '❌' : '✏️'}
                         </button>
                         <button
                             onClick={handleDelete}
@@ -136,44 +222,60 @@ export default function CommentCard(props){
                 )}
             </div>
             <div className={styles.commentContent}>
-                {(isEdit && props.user) ? (
-                    <div>
-                        <form className={styles.editForm}>
-                            <div>
-                                <textarea
-                                    id="comment"
-                                    name="comment"
-                                    rows="3"
-                                    value={text}
-                                    onChange={(e) => setText(e.target.value)}
-                                    required
-                                    placeholder="Editing comment..."
-                                >
-                                </textarea>
-                            </div>
+                {(props.user && props.editingId === props.comment.id) ? (
+                    <div className={styles.editForm}>
+                        <div>
+                            <textarea
+                                rows="3"
+                                value={text}
+                                onChange={(e) => setText(e.target.value)}
+                                required
+                                placeholder="Editing comment..."
+                            >
+                            </textarea>
+                        </div>
 
-                            {editError && (
-                                <div>
-                                    <sup className="error-message">
-                                        {editError}
-                                    </sup>
-                                </div>
-                            )}
-
+                        {editError && (
                             <div>
-                                <button
-                                    onClick={handleEditSubmit}
-                                    disabled={editLoading}
-                                >
-                                    {editLoading ? "Saving..." : "Save"}
-                                </button>
+                                <sup className="error-message">
+                                    {editError}
+                                </sup>
                             </div>
-                        </form>
+                        )}
+
+                        <div>
+                            <button
+                                onClick={handleEditSubmit}
+                                disabled={editLoading}
+                            >
+                                {editLoading ? "Saving..." : "Save"}
+                            </button>
+                        </div>
                     </div>
                 ) : (
                     <p>{maskedText}</p>
                 )}
             </div>
+            {!(props.editingId === props.comment.id) && (
+                <div className={styles.commentReaction}>
+                    <button
+                        onClick={() => handleReaction("like")}
+                        disabled={!props.user || reactLoading}
+                        className={styles.likeButton}
+                        style={likeStyle}
+                    >
+                        👍 {maskedLike}
+                    </button>
+                    <button
+                        onClick={() => handleReaction("dislike")}
+                        disabled={!props.user || reactLoading}
+                        className={styles.dislikeButton}
+                        style={dislikeStyle}
+                    >
+                        👎 {maskedDislike}
+                    </button>
+                </div>
+            )}
             <hr/>
         </div>
     );

@@ -104,3 +104,27 @@
     background: rgb(8, 198, 8);
     cursor: pointer;
 }
+
+.commentReaction button{
+    height: 30px;
+    width: 40px;
+    padding: 2px;
+    background: rgb(42, 42, 42);
+    font-weight: bold;
+    transition: background ease 0.2s;
+}
+
+.commentReaction button:hover{
+    cursor: pointer;
+    background: rgb(25, 25, 25);
+}
+
+.likeButton{
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.dislikeButton{
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}

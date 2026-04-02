@@ -23,17 +23,25 @@
     padding: 0;
     margin-top: 10px;
     border-radius: 20px;
+    gap: 15px;
 }
 
 .cardHeader:hover{
     background: rgb(42, 42, 42);
+    cursor: pointer;
 }
 
 .cardHeader h2{
     margin-left: 15px;
 }
 
-.cardHeader button{
+.actions {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.deleteButton{
     height: 40px;
     width: 40px;
     border-radius: 10px;
@@ -43,14 +51,30 @@
     z-index: 2;
 }
 
-.cardHeader button:hover{
+.deleteButton:hover{
     cursor: pointer;
     background: rgb(180, 7, 7);
 }
 
-.topicLink{
+.editButton{
+    height: 40px;
+    width: 40px;
+    border-radius: 10px;
+    background: lightgrey;
+    transition: background ease 0.2s;
+    margin-right: 5px;
+    z-index: 2;
+}
+
+.editButton:hover{
+    cursor: pointer;
+    background: grey;
+}
+
+.topicLink {
     text-decoration: none;
     color: white;
+    flex-grow: 1;
 }
 
 .topicLink:hover{

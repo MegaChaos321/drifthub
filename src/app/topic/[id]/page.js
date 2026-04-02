@@ -3,13 +3,18 @@
 import CommentCard from "@/components/CommentCard";
 import TopicHead from "@/components/TopicHead";
 import { useAuth } from "@/context/AuthContext";
-import { useParams } from "next/navigation";
+import { useRouter, useSearchParams, useParams } from "next/navigation";
 import { useState, useEffect, useCallback } from "react";
 
 export default function Topic(){
     const { loading: userLoading, user } = useAuth();
     const params = useParams();
     const id = params.id;
+
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const shouldEdit = searchParams.get('edit') === 'true';
+
     const [topic, setTopic] = useState(null);
     const [loadingTopic, setLoadingTopic] = useState(false);
     const [comments, setComments] = useState([]);
@@ -17,6 +22,7 @@ export default function Topic(){
     const [currentFetch, setCurrentFetch] = useState(0);
     const [limit] = useState(10);
     const [pagination, setPagination] = useState({ total: 0, hasMore: false });
+    const [editingId, setEditingId] = useState(null);
 
     const fetchTopic = useCallback(async () => {
         setLoadingTopic(true);
@@ -102,6 +108,10 @@ export default function Topic(){
                     commentCount={pagination.total}
                     user={user}
                     fetchComments={fetchComments}
+                    router={router}
+                    shouldEdit={shouldEdit}
+                    editingId={editingId}
+                    setEditingId={setEditingId}
                 />
             )}
             {currentFetch === 0 && loadingComments ? (
@@ -117,6 +127,10 @@ export default function Topic(){
                                     user={user}
                                     topicId={id}
                                     fetchComments={fetchComments}
+                                    router={router}
+                                    shouldEdit={shouldEdit}
+                                    editingId={editingId}
+                                    setEditingId={setEditingId}
                                 />
                             ))}
                         </div>

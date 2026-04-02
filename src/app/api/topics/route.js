@@ -7,9 +7,9 @@ export async function GET(request) {
     try {
         const { searchParams } = new URL(request.url);
         const limit = parseInt(searchParams.get('limit') || '5');
-        const offset = parseInt(searchParams.get('skip') || '0');
+        const offset = parseInt(searchParams.get('offset') || '0');
         const search = searchParams.get('filterValue') || '';
-        const sort = "DESC";
+        const sort = searchParams.get('sort') || 'DESC';
 
         const [result] = await clientPool.query('CALL get_topics_paginated(?, ?, ?, ?)', [
             search,
