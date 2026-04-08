@@ -30,7 +30,7 @@
     height: 40px;
     width: 40px;
     border-radius: 10px;
-    background: lightgrey;
+    background: rgb(158, 158, 3);
     transition: background ease 0.2s;
     margin-right: 5px;
     z-index: 2;
@@ -38,7 +38,7 @@
 
 .editButton:hover{
     cursor: pointer;
-    background: grey;
+    background: rgb(124, 124, 2);
 }
 
 .topicBody{
@@ -99,6 +99,11 @@
     align-items: center;
 }
 
+.topicFooter > div{
+    display: flex;
+    align-items: center;
+}
+
 .topicFooter button{
     background: white;
     color: black;
@@ -116,15 +121,28 @@
 
 .comments{
     background: rgb(42, 42, 42);
-    height: 30px;
     padding: 5px;
     border-radius: 10px;
     margin-right: 15px;
     font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    user-select: none;
 }
 
 .date{
     margin-right: 15px;
+}
+
+.user a{
+    color: rgb(17, 216, 17);
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.user a:hover{
+    color: rgb(0, 255, 0);
 }
 
 .commentForm > div{

@@ -45,6 +45,7 @@
     height: 40px;
     width: 40px;
     border-radius: 10px;
+    color: white;
     background: red;
     transition: background ease 0.2s;
     margin-right: 15px;
@@ -60,7 +61,8 @@
     height: 40px;
     width: 40px;
     border-radius: 10px;
-    background: lightgrey;
+    color: white;
+    background: rgb(158, 158, 3);
     transition: background ease 0.2s;
     margin-right: 5px;
     z-index: 2;
@@ -68,7 +70,7 @@
 
 .editButton:hover{
     cursor: pointer;
-    background: grey;
+    background: rgb(124, 124, 2);
 }
 
 .topicLink {
@@ -94,12 +96,26 @@
 .comments{
     background: rgb(42, 42, 42);
     height: 30px;
-    padding: 5px 5px 0 5px;
+    padding: 3px 5px 3px 5px;
     border-radius: 10px;
     margin-right: 15px;
     font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    user-select: none;
 }
 
 .date{
     margin-right: 15px;
+}
+
+.user a{
+    color: rgb(17, 216, 17);
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.user a:hover{
+    color: rgb(0, 255, 0);
 }

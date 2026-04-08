@@ -1,6 +1,8 @@
 'use client';
 
+import Link from "next/link";
 import { useState } from "react";
+import { X, PencilLine, MessageCircle } from "lucide-react";
 import styles from "./TopicHead.module.css";
 
 export default function TopicHead(props){
@@ -16,6 +18,15 @@ export default function TopicHead(props){
     const [text, setText ] = useState("");
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+
+    const isAuthor = props.user?.id === props.topic?.userID;
+    const isAdmin = props.user?.role === 'Administrator';
+    const canManage = isAuthor || isAdmin;
+
+    const editStyle = {
+        color: isEdit ? "red" : "white",
+        transition: "color 0.2s ease"
+    };
 
     const toggleIsEdit = () => {
         if (props.shouldEdit) props.router.push('/');
@@ -86,18 +97,6 @@ export default function TopicHead(props){
         if (props.editingId) props.setEditingId(null);
     }
 
-    const formatDate = (dateString) => {
-        if (!dateString) return 'N/A'
-            const date = new Date(dateString);
-            return date.toLocaleDateString('pt-PT', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    }
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
@@ -132,26 +131,49 @@ export default function TopicHead(props){
         }
     }
 
+    const formatDate = (dateString) => {
+        if (!dateString) return 'N/A'
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-PT', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
+    const canEditTitle = () => {
+        if (!props.topic.createdAt) return false;
+        
+        const createdTime = new Date(props.topic.createdAt).getTime();
+        const currentTime = new Date().getTime();
+        const oneHourInMs = 60 * 60 * 1000;
+
+        return (currentTime - createdTime) < oneHourInMs;
+    };
+
     if (!props.topic) return <h1>Loading...</h1>;
 
     return (
         <div className={styles.topicSection}>
             <div className={styles.topicHead}>
-                {!isEdit ? (
-                    <div>
-                        <h1>{maskedFormData.title}</h1>
-                    </div>
-                ) : (
+                {(isEdit && (canEditTitle() || isAdmin)) ? (
                     <input 
                         className={styles.editTitleInput}
                         value={formData.title}
+                        placeholder="Editing discussion topic title..."
                         onChange={(e) => setFormData({...formData, title: e.target.value})}
                     />
+                ) : (
+                    <div>
+                        <h1>{maskedFormData.title}</h1>
+                    </div>
                 )}
                 
-                {(props.user && String(props.topic.userID) === String(props.user.id)) && (
-                    <button onClick={handleEdit} className={styles.editButton}>
-                        {isEdit ? '❌' : '✏️'}
+                {canManage && (
+                    <button onClick={handleEdit} style={editStyle} className={styles.editButton}>
+                        {isEdit ? <X size="20" strokeWidth="5" /> : <PencilLine size="20" />}
                     </button>
                 )}
             </div>
@@ -162,6 +184,7 @@ export default function TopicHead(props){
                         <textarea
                             rows="5"
                             value={formData.content}
+                            placeholder="Write your topic description here..."
                             onChange={(e) => setFormData({...formData, content: e.target.value})}
                         />
                     </div>
@@ -199,9 +222,15 @@ export default function TopicHead(props){
             
             <div className={styles.topicFooter}>
                 <div>
-                    <span className={styles.comments}>💬{props.commentCount}</span>
+                    <span className={styles.comments}>
+                        <MessageCircle size="15" />
+                        <span>{props.commentCount}</span>
+                    </span>
                     <span className={styles.date}>{formatDate(props.topic.createdAt)}</span>
-                    <span>By: <span style={{color: "rgb(17, 216, 17)", fontWeight: "bold"}}>{props.topic.username}</span></span>
+                    <span className={styles.user}>By: <Link
+                        href={"/profile/" + props.topic.userID}>
+                            {props.topic.username}
+                    </Link></span>
                 </div>
                 {props.user && (
                     <button onClick={toggleCreateComment}>

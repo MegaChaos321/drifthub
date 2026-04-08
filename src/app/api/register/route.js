@@ -5,12 +5,20 @@ import bcrypt from 'bcryptjs';
 export async function POST(request) {
     try {
         const body = await request.json();
-        const { username, password } = body;
+        const { username, birthDate, password } = body;
         const email = body.email?.trim().toLowerCase();
 
-        if (!username || !email || !password) {
+        if (!username || !email || !password || !birthDate) {
             return NextResponse.json(
-                { error: 'Username, email and password are required' },
+                { error: 'All fields are required' },
+                { status: 400 }
+            );
+        }
+
+        const birthDateObj = new Date(birthDate);
+        if (isNaN(birthDateObj.getTime()) || birthDateObj > new Date() || birthDateObj < new Date('1900-01-01')) {
+            return NextResponse.json(
+                { error: 'Invalid date of birth' },
                 { status: 400 }
             );
         }
@@ -32,8 +40,9 @@ export async function POST(request) {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const [result] = await clientPool.query('CALL create_user(?, ?, ?)', [
+        const [result] = await clientPool.query('CALL create_user(?, ?, ?, ?)', [
             username,
+            birthDate,
             email,
             hashedPassword
         ]);

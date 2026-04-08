@@ -23,6 +23,17 @@
     margin-right: 5px;
 }
 
+.user a{
+    margin-right: 5px;
+    color: rgb(17, 216, 17);
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.user a:hover{
+    color: rgb(0, 255, 0);
+}
+
 .date{
     margin-right: 10px;
 }
@@ -36,6 +47,7 @@
     width: 30px;
     padding: 2px;
     border-radius: 10px;
+    color: white;
     background: red;
     transition: background ease 0.2s;
     margin-right: 5px;
@@ -51,14 +63,14 @@
     width: 30px;
     padding: 2px;
     border-radius: 10px;
-    background: lightgrey;
+    background: rgb(158, 158, 3);
     transition: background ease 0.2s;
     margin-right: 5px;
 }
 
 .editButton:hover{
     cursor: pointer;
-    background: grey;
+    background: rgb(124, 124, 2);
 }
 
 .commentContent{
@@ -105,10 +117,14 @@
     cursor: pointer;
 }
 
+.commentReaction{
+    display: flex;
+    align-items: center;
+}
+
 .commentReaction button{
     height: 30px;
-    width: 40px;
-    padding: 2px;
+    padding: 3px 5px 3px 5px;
     background: rgb(42, 42, 42);
     font-weight: bold;
     transition: background ease 0.2s;
@@ -119,12 +135,23 @@
     background: rgb(25, 25, 25);
 }
 
+.commentReaction button:disabled{
+    cursor: default;
+    background: rgb(42, 42, 42);
+}
+
 .likeButton{
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
 }
 
 .dislikeButton{
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
 }

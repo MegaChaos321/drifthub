@@ -14,6 +14,11 @@ export default function TopicActions(props){
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
 
+    const createStyle = {
+        background: createForm ? "rgb(165, 13, 13)" : "green",
+        transition: "background 0.2s ease"
+    };
+
     useEffect(() => {
         if (success) {
             const timer = setTimeout(() => {
@@ -48,11 +53,6 @@ export default function TopicActions(props){
 
         props.handleSearch();
     }
-
-    const createStyle = {
-        background: createForm ? "rgb(165, 13, 13)" : "green",
-        transition: "background 0.2s ease"
-    };
 
     const toggleCreateForm = () => {
         setError('');
@@ -143,7 +143,7 @@ export default function TopicActions(props){
                                     value={formData.title}
                                     onChange={handleChange}
                                     required
-                                    placeholder="Title"
+                                    placeholder="Choose your discussion topic title..."
                                 />
                             </div>
 
@@ -155,7 +155,7 @@ export default function TopicActions(props){
                                     rows="5"
                                     value={formData.content}
                                     onChange={handleChange}
-                                    placeholder="Description"
+                                    placeholder="Write your topic description here..."
                                 >
                                 </textarea>
                             </div>

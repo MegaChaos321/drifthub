@@ -1,6 +1,8 @@
 'use client';
 
+import Link from "next/link";
 import { useState } from "react";
+import { X, PencilLine, Trash2, Hourglass, ThumbsUp, ThumbsDown } from "lucide-react";
 import styles from "./CommentCard.module.css";
 
 export default function CommentCard(props){
@@ -15,6 +17,10 @@ export default function CommentCard(props){
     const [maskedReaction, setMaskedReaction] = useState(props.comment.userReaction);
     const [reactLoading, setReactLoading] = useState(false);
 
+    const isAuthor = props.user?.id === props.comment.userID;
+    const isAdmin = props.user?.role === 'Administrator';
+    const canManage = isAuthor || isAdmin;
+
     const likeStyle = {
         color: maskedReaction === "like" ? "rgb(149, 198, 255)" : "white",
         transition: "color 0.2s ease"
@@ -22,6 +28,11 @@ export default function CommentCard(props){
 
     const dislikeStyle = {
         color: maskedReaction === "dislike" ? "rgb(149, 198, 255)" : "white",
+        transition: "color 0.2s ease"
+    };
+
+    const editStyle = {
+        color: (props.editingId === props.comment.id) ? "red" : "white",
         transition: "color 0.2s ease"
     };
 
@@ -197,26 +208,30 @@ export default function CommentCard(props){
         <div className={styles.commentSection}>
             <div className={styles.commentHeader}>
                 <div>
-                    <span className={styles.user}>By: <span style={{color: "rgb(17, 216, 17)", fontWeight: "bold"}}>{props.comment.username}</span></span>
+                    <span className={styles.user}>By: <Link 
+                        href={"/profile/" + props.comment.userID}>
+                            {props.comment.username}
+                    </Link></span>
                     <span className={styles.date}> at {formatDate(props.comment.createdAt)}</span>
                     {wasEdited && (
                         <span className={styles.edited}><i>[edited]</i></span>
                     )}
                 </div>
-                {(props.user && String(props.comment.userID) === String(props.user.id)) && (
+                {canManage && (
                     <div>
                         <button
                             onClick={handleEdit}
+                            style={editStyle}
                             className={styles.editButton}
                         >
-                            {(props.editingId === props.comment.id) ? '❌' : '✏️'}
+                            {(props.editingId === props.comment.id) ? <X size="15" strokeWidth="5" /> : <PencilLine size="15" />}
                         </button>
                         <button
                             onClick={handleDelete}
                             disabled={deletingCommentId === props.comment.id}
                             className={styles.deleteButton}
                         >
-                            {deletingCommentId === props.comment.id ? '⏳' : '🗑️'}
+                            {deletingCommentId === props.comment.id ? <Hourglass size="15" /> : <Trash2 size="15" />}
                         </button>
                     </div>
                 )}
@@ -264,7 +279,8 @@ export default function CommentCard(props){
                         className={styles.likeButton}
                         style={likeStyle}
                     >
-                        👍 {maskedLike}
+                        <ThumbsUp size="15" />
+                        <span>{maskedLike}</span>
                     </button>
                     <button
                         onClick={() => handleReaction("dislike")}
@@ -272,7 +288,8 @@ export default function CommentCard(props){
                         className={styles.dislikeButton}
                         style={dislikeStyle}
                     >
-                        👎 {maskedDislike}
+                        <ThumbsDown size="15" />
+                        <span>{maskedDislike}</span>
                     </button>
                 </div>
             )}

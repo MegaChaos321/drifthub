@@ -76,7 +76,6 @@ export default function Home() {
 
     return (
         <div>
-            <h1>Welcome to the forum{user && (<span style={{color: "green"}}>{" "+user.username}</span>)}!</h1>
             <TopicActions
                 searchValue={searchValue}
                 setSearchValue={setSearchValue}
@@ -88,6 +87,8 @@ export default function Home() {
                 fetchTopics={fetchTopics}
                 currentPage={currentPage}
             />
+            <h1>Welcome to the forum{user && (<span style={{color: "green"}}>{" "+user.username}</span>)}!</h1>
+            <br/>
             {loadingTopics ? (
                 <h2>Loading topics...</h2>
             ) : (

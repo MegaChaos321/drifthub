@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function Login() {
     const { loading: userLoading, user, login } = useAuth();
@@ -14,6 +15,7 @@ export default function Login() {
     });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     useEffect(() => {
         if(!userLoading && user){
@@ -85,7 +87,7 @@ export default function Login() {
                 <div>
                     <label htmlFor="password">Password</label>
                     <input
-                        type="password"
+                        type={showPassword ? "text" : "password"}
                         id="password"
                         name="password"
                         value={formData.password}
@@ -93,6 +95,12 @@ export default function Login() {
                         required
                         placeholder="Password"
                     />
+                    <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                    >
+                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
                 </div>
 
                 {error && (

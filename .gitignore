@@ -40,5 +40,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-#vscode
+# vscode
 .vscode
+
+# database seed / users
+/src/database/06_seed.sql
+/src/database/07_users.sql
+/src/database/08_maintenance.sql

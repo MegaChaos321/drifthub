@@ -143,6 +143,11 @@ body{
   cursor: pointer;
 }
 
+.user-form input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+}
+
 .error-message{
   display: block;
   margin-left: auto;

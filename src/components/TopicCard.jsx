@@ -3,11 +3,16 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from 'next/navigation';
+import { PencilLine, Trash2, Hourglass, MessageCircle } from "lucide-react";
 import styles from "./TopicCard.module.css";
 
 export default function TopicCard(props){
     const router = useRouter();
     const [deletingTopicId, setDeletingTopicId] = useState(null);
+
+    const isAuthor = props.user?.id === props.topic?.userID;
+    const isAdmin = props.user?.role === 'Administrator';
+    const canManage = isAuthor || isAdmin;
 
     const handleDelete = async () => {
         if (!confirm('Are you sure you want to delete this topic?')) {
@@ -66,13 +71,13 @@ export default function TopicCard(props){
                     <h2>{props.topic.title}</h2>
                 </Link>
 
-                {(props.user && String(props.topic.userID) === String(props.user.id)) && (
+                {canManage && (
                     <div className={styles.actions}>
                         <button onClick={() => router.push(`/topic/${props.topic.id}?edit=true`)} className={styles.editButton}>
-                            ✏️
+                            <PencilLine size="20" />
                         </button>
                         <button onClick={handleDeleteClick} className={styles.deleteButton}>
-                            {deletingTopicId === props.topic.id ? '⏳' : '🗑️'}
+                            {deletingTopicId === props.topic.id ? <Hourglass size="20" /> : <Trash2 size="20" />}
                         </button>
                     </div>
                 )}
@@ -85,9 +90,15 @@ export default function TopicCard(props){
             </div>
 
             <div className={styles.cardFooter}>
-                <span className={styles.comments}>💬{props.topic.commentCount}</span>
+                <span className={styles.comments}>
+                    <MessageCircle size="15" />
+                    <span>{props.topic.commentCount}</span>
+                </span>
                 <span className={styles.date}>{formatDate(props.topic.createdAt)}</span>
-                <span>By: <span style={{color: "rgb(17, 216, 17)", fontWeight: "bold"}}>{props.topic.username}</span></span>
+                <span className={styles.user}>By: <Link
+                    href={"/profile/" + props.topic.userID}>
+                        {props.topic.username}
+                </Link></span>
             </div>
         </div>
     );
