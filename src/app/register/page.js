@@ -123,7 +123,7 @@ export default function Register() {
                 </div>
 
                 <div>
-                    <label htmlFor="birthDate">Date of Birth <span>*</span></label>
+                    <label htmlFor="birthDate">Birthday <span>*</span></label>
                     <input
                         type="date"
                         id="birthDate"

@@ -11,7 +11,7 @@ export async function GET(request, { params }) {
         if (!id || !uuidValidate(id)) {
             return NextResponse.json(
                 { error: 'Invalid topic ID' },
-                { status: 400 }
+                { status: 404 }
             );
         }
 

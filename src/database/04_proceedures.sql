@@ -38,6 +38,157 @@ BEGIN
 END //
 DELIMITER ;
 
+-- Procedure Update User
+DELIMITER //
+DROP PROCEDURE IF EXISTS update_user//
+CREATE PROCEDURE update_user(
+    IN p_targetUserID VARCHAR(36),
+    IN p_currentUserID VARCHAR(36),
+    IN p_role VARCHAR(20),
+    IN p_username VARCHAR(50),
+    IN p_birth_date DATE,
+    IN p_email VARCHAR(255)
+)
+BEGIN
+    DECLARE v_targetBin BINARY(16) DEFAULT UUID_TO_BIN(p_targetUserID, 1);
+    DECLARE v_currentBin BINARY(16) DEFAULT UUID_TO_BIN(p_currentUserID, 1);
+    DECLARE v_exists INT DEFAULT 0;
+
+    SELECT 1 INTO v_exists
+    FROM users 
+    WHERE id = v_targetBin AND isDeleted = 0
+    LIMIT 1;
+
+    IF v_exists = 0 THEN
+        SELECT 'NOT_FOUND' AS `status`;
+    ELSEIF v_targetBin != v_currentBin AND p_role != 'Administrator' THEN
+        SELECT 'FORBIDDEN' AS `status`;
+    ELSE
+		IF EXISTS (SELECT 1 FROM users WHERE username = p_username AND id != v_targetBin) THEN
+            SELECT 'USERNAME_TAKEN' AS `status`;
+        ELSEIF EXISTS (SELECT 1 FROM users WHERE email = p_email AND id != v_targetBin) THEN
+            SELECT 'EMAIL_TAKEN' AS `status`;
+        ELSE
+			UPDATE users
+			SET username = p_username,
+				email = p_email,
+				birthDate = p_birth_date,
+				updatedAt = CURRENT_TIMESTAMP()
+			WHERE id = v_targetBin;
+
+			SELECT 'SUCCESS' AS `status`;
+		END IF;
+    END IF;
+END //
+DELIMITER ;
+
+-- Procedure Update User Password
+DELIMITER //
+DROP PROCEDURE IF EXISTS update_user_password//
+CREATE PROCEDURE update_user_password(
+    IN p_targetUserID VARCHAR(36),
+    IN p_currentUserID VARCHAR(36),
+    IN p_password_hash VARCHAR(255)
+)
+BEGIN
+    DECLARE v_targetBin BINARY(16) DEFAULT UUID_TO_BIN(p_targetUserID, 1);
+    DECLARE v_currentBin BINARY(16) DEFAULT UUID_TO_BIN(p_currentUserID, 1);
+    DECLARE v_exists INT DEFAULT 0;
+
+    SELECT 1 INTO v_exists
+    FROM users 
+    WHERE id = v_targetBin AND isDeleted = 0
+    LIMIT 1;
+
+    IF v_exists = 0 THEN
+        SELECT 'NOT_FOUND' AS `status`;
+    ELSEIF v_targetBin != v_currentBin THEN
+        SELECT 'FORBIDDEN' AS `status`;
+    ELSE
+        UPDATE users
+        SET `password` = p_password_hash,
+            updatedAt = CURRENT_TIMESTAMP()
+        WHERE id = v_targetBin;
+
+        SELECT 'SUCCESS' AS `status`;
+    END IF;
+END //
+DELIMITER ;
+
+-- Procedure Update User Profile
+DELIMITER //
+DROP PROCEDURE IF EXISTS update_user_profile//
+CREATE PROCEDURE update_user_profile(
+    IN p_targetUserID VARCHAR(36),
+    IN p_currentUserID VARCHAR(36),
+    IN p_role VARCHAR(20),
+    IN p_bio TEXT,
+    IN p_profileImage LONGTEXT,
+    IN p_showEmail TINYINT(1),
+    IN p_showBirthDate TINYINT(1)
+)
+BEGIN
+    DECLARE v_targetBin BINARY(16) DEFAULT UUID_TO_BIN(p_targetUserID, 1);
+    DECLARE v_currentBin BINARY(16) DEFAULT UUID_TO_BIN(p_currentUserID, 1);
+    DECLARE v_exists INT DEFAULT 0;
+
+    SELECT 1 INTO v_exists
+    FROM users 
+    WHERE id = v_targetBin AND isDeleted = 0
+    LIMIT 1;
+
+    IF v_exists = 0 THEN
+        SELECT 'NOT_FOUND' AS `status`;
+    ELSEIF v_targetBin != v_currentBin AND p_role != 'Administrator' THEN
+        SELECT 'FORBIDDEN' AS `status`;
+    ELSE
+        UPDATE user_profiles 
+        SET bio = p_bio,
+            profileImage = p_profileImage,
+            showEmail = p_showEmail,
+            showBirthDate = p_showBirthDate
+        WHERE userID = v_targetBin;
+
+        SELECT 'SUCCESS' AS `status`;
+    END IF;
+END //
+DELIMITER ;
+
+-- Procedure Soft Delete User
+DELIMITER //
+DROP PROCEDURE IF EXISTS soft_delete_user //
+CREATE PROCEDURE soft_delete_user(
+    IN p_targetUserID VARCHAR(36),
+    IN p_currentUserID VARCHAR(36),
+    IN p_role VARCHAR(20)
+)
+BEGIN
+	DECLARE v_targetBin BINARY(16) DEFAULT UUID_TO_BIN(p_targetUserID, 1);
+    DECLARE v_currentBin BINARY(16) DEFAULT UUID_TO_BIN(p_currentUserID, 1);
+    DECLARE v_exists INT DEFAULT 0;
+
+    SELECT 1 INTO v_exists
+    FROM users 
+    WHERE id = v_targetBin AND isDeleted = 0
+    LIMIT 1;
+
+    IF v_exists = 0 THEN
+        SELECT 'NOT_FOUND' AS `status`;
+    ELSE
+        UPDATE users
+        SET isDeleted = 1
+        WHERE id = v_targetBin 
+		AND (v_targetBin = v_currentBin OR p_role = 'Administrator');
+
+        IF ROW_COUNT() > 0 THEN
+            SELECT 'SUCCESS' AS `status`;
+        ELSE
+            SELECT 'FORBIDDEN' AS `status`;
+        END IF;
+    END IF;
+END //
+DELIMITER ;
+
 -- Procedure Get User Profile
 DELIMITER //
 DROP PROCEDURE IF EXISTS get_user_profile//
@@ -47,7 +198,10 @@ CREATE PROCEDURE get_user_profile(
     IN p_role VARCHAR(20)
 )
 BEGIN
-    IF UUID_TO_BIN(p_targetUserID, 1) = UUID_TO_BIN(p_currentUserID, 1) OR p_role = 'Administrator' THEN
+	DECLARE v_targetBin BINARY(16) DEFAULT UUID_TO_BIN(p_targetUserID, 1);
+    DECLARE v_currentBin BINARY(16) DEFAULT UUID_TO_BIN(p_currentUserID, 1);
+    
+    IF v_targetBin = v_currentBin OR p_role = 'Administrator' THEN
         SELECT 
             BIN_TO_UUID(u.id, 1) AS id,
             u.username,
@@ -61,7 +215,8 @@ BEGIN
             up.showBirthDate
         FROM users u
         LEFT JOIN user_profiles up ON u.id = up.userID
-        WHERE u.id = UUID_TO_BIN(p_targetUserID, 1);
+        WHERE u.id = v_targetBin
+        AND u.isDeleted = 0;
     ELSE
         SELECT * FROM get_public_profiles 
         WHERE id = p_targetUserID;
@@ -79,18 +234,21 @@ CREATE PROCEDURE get_user_activity(
     IN p_viewMode TINYINT
 )
 BEGIN
+	DECLARE v_targetBin BINARY(16) DEFAULT UUID_TO_BIN(p_targetUserID, 1);
+    DECLARE v_currentBin BINARY(16) DEFAULT UUID_TO_BIN(p_currentUserID, 1);
+    
     IF p_viewMode = 0 THEN
         SELECT * FROM get_topics 
         WHERE userID = p_targetUserID
         ORDER BY createdAt DESC;
     ELSEIF p_viewMode = 1 THEN
-        IF p_targetUserID = p_currentUserID OR p_role = 'Administrator' THEN
+        IF v_targetBin = v_currentBin OR p_role = 'Administrator' THEN
             SELECT * FROM get_deleted_topics 
             WHERE userID = p_targetUserID
             ORDER BY deletedAt DESC;
         ELSE
             SIGNAL SQLSTATE '45000' 
-            SET MESSAGE_TEXT = 'Acesso negado aos tópicos eliminados.';
+            SET MESSAGE_TEXT = 'Access to deleted topics denied.';
         END IF;
     END IF;
 END //
@@ -183,6 +341,40 @@ BEGIN
 END //
 DELIMITER ;
 
+-- Procedure Restore Topic
+DELIMITER //
+DROP PROCEDURE IF EXISTS restore_topic //
+CREATE PROCEDURE restore_topic(
+    IN p_topicID VARCHAR(36),
+    IN p_userID VARCHAR(36),
+    IN p_role VARCHAR(20)
+)
+BEGIN
+    DECLARE v_exists INT DEFAULT 0;
+
+    SELECT 1 INTO v_exists
+    FROM topics 
+    WHERE id = UUID_TO_BIN(p_topicID, 1) AND isDeleted = 1
+    LIMIT 1;
+
+    IF v_exists = 0 THEN
+        SELECT 'NOT_FOUND' AS `status`;
+    
+    ELSE
+        UPDATE topics 
+        SET isDeleted = 0
+        WHERE id = UUID_TO_BIN(p_topicID, 1) 
+		AND (userID = UUID_TO_BIN(p_userID, 1) OR p_role = 'Administrator');
+
+        IF ROW_COUNT() > 0 THEN
+            SELECT 'SUCCESS' AS `status`;
+        ELSE
+            SELECT 'FORBIDDEN' AS `status`;
+        END IF;
+    END IF;
+END //
+DELIMITER ;
+
 -- Procedure Soft Delete Topic
 DELIMITER //
 DROP PROCEDURE IF EXISTS soft_delete_topic //
@@ -205,6 +397,39 @@ BEGIN
     ELSE
         UPDATE topics 
         SET isDeleted = 1
+        WHERE id = UUID_TO_BIN(p_topicID, 1) 
+		AND (userID = UUID_TO_BIN(p_userID, 1) OR p_role = 'Administrator');
+
+        IF ROW_COUNT() > 0 THEN
+            SELECT 'SUCCESS' AS `status`;
+        ELSE
+            SELECT 'FORBIDDEN' AS `status`;
+        END IF;
+    END IF;
+END //
+DELIMITER ;
+
+-- Procedure Hard Delete Topic
+DELIMITER //
+DROP PROCEDURE IF EXISTS hard_delete_topic //
+CREATE PROCEDURE hard_delete_topic(
+    IN p_topicID VARCHAR(36),
+    IN p_userID VARCHAR(36),
+    IN p_role VARCHAR(20)
+)
+BEGIN
+    DECLARE v_exists INT DEFAULT 0;
+
+    SELECT 1 INTO v_exists
+    FROM topics 
+    WHERE id = UUID_TO_BIN(p_topicID, 1) AND isDeleted = 1
+    LIMIT 1;
+
+    IF v_exists = 0 THEN
+        SELECT 'NOT_FOUND' AS `status`;
+    
+    ELSE
+        DELETE FROM topics
         WHERE id = UUID_TO_BIN(p_topicID, 1) 
 		AND (userID = UUID_TO_BIN(p_userID, 1) OR p_role = 'Administrator');
 

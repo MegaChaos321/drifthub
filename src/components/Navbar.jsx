@@ -14,7 +14,10 @@ export default function Navbar(){
             {!loading && (
                 <div className="navbar-content">
                 {user ? (
-                    <button onClick={logout}><span>Logout</span></button>
+                    <>
+                        <button onClick={logout}><span>Logout</span></button>
+                        <button><Link href={"/profile/" + user.id}>Perfil</Link></button>
+                    </>
                 ): (
                     <>
                         <button><Link href="/login">Login</Link></button>

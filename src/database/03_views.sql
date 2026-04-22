@@ -27,9 +27,12 @@ SELECT
     IF(up.showEmail = 1, u.email, NULL) AS email,
     IF(up.showBirthDate = 1, u.birthDate, NULL) AS birthDate,
     up.bio,
-    up.profileImage
+    up.profileImage,
+    up.showEmail,
+    up.showBirthDate
 FROM users u
-LEFT JOIN user_profiles up ON u.id = up.userID;
+LEFT JOIN user_profiles up ON u.id = up.userID
+WHERE u.isDeleted = 0;
 
 -- View Get Topics
 DROP VIEW IF EXISTS get_topics;

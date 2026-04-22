@@ -64,8 +64,8 @@ export default function TopicHead(props){
             const response = await fetch(`/api/topics/${props.topic.id}`, {
                 method: 'PUT',
                 headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
                     title: formData.title.trim(),

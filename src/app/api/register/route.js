@@ -63,6 +63,13 @@ export async function POST(request) {
             );
         }
 
+        if (error.errno === 1062 || error.code === 'ER_DUP_ENTRY') {
+            return NextResponse.json(
+                { error: 'Username is already taken' },
+                { status: 409 }
+            );
+        }
+
         console.error('Register error:', error);
         return NextResponse.json(
             { error: 'Internal server error. Please try again.' },

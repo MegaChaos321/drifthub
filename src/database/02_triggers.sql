@@ -40,20 +40,24 @@ BEGIN
     ELSEIF NEW.isDeleted = 0 AND OLD.isDeleted = 1 THEN
         SET NEW.deletedAt = NULL;
     END IF;
-END //
-DELIMITER ;
-
--- Trigger Before User Profile Update
-DELIMITER //
-DROP TRIGGER IF EXISTS before_user_profile_update//
-CREATE TRIGGER before_user_profile_update
-BEFORE UPDATE ON user_profiles
-FOR EACH ROW
-BEGIN
+    
     IF NEW.birthDate > CURDATE() THEN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Birthdate cannot come from the future.';
     END IF;
+END //
+DELIMITER ;
+
+-- Trigger After User Profile Update
+DELIMITER //
+DROP TRIGGER IF EXISTS after_user_profile_update//
+CREATE TRIGGER after_user_profile_update
+AFTER UPDATE ON user_profiles
+FOR EACH ROW
+BEGIN
+    UPDATE users
+    SET updatedAt = CURRENT_TIMESTAMP()
+    WHERE id = NEW.userID;
 END //
 DELIMITER ;
 
@@ -68,6 +72,10 @@ BEGIN
         SET NEW.deletedAt = NOW();
     ELSEIF NEW.isDeleted = 0 AND OLD.isDeleted = 1 THEN
         SET NEW.deletedAt = NULL;
+    END IF;
+    
+    IF (NEW.title <> OLD.title OR NEW.content <> OLD.content) THEN
+        SET NEW.updatedAt = NOW();
     END IF;
 END //
 DELIMITER ;

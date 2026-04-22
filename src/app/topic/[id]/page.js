@@ -3,7 +3,7 @@
 import CommentCard from "@/components/CommentCard";
 import TopicHead from "@/components/TopicHead";
 import { useAuth } from "@/context/AuthContext";
-import { useRouter, useSearchParams, useParams } from "next/navigation";
+import { useRouter, useSearchParams, useParams, notFound } from "next/navigation";
 import { useState, useEffect, useCallback } from "react";
 
 export default function Topic(){
@@ -15,6 +15,7 @@ export default function Topic(){
     const searchParams = useSearchParams();
     const shouldEdit = searchParams.get('edit') === 'true';
 
+    const [isNotFound, setIsNotFound] = useState(false);
     const [topic, setTopic] = useState(null);
     const [loadingTopic, setLoadingTopic] = useState(false);
     const [comments, setComments] = useState([]);
@@ -28,6 +29,12 @@ export default function Topic(){
         setLoadingTopic(true);
         try {
             const response = await fetch(`/api/topics/${id}`);
+
+            if (response.status === 404) {
+                setIsNotFound(true); 
+                return;
+            }
+
             const data = await response.json();
 
             if (response.ok) {
@@ -43,6 +50,7 @@ export default function Topic(){
     }, [id]);
 
     const fetchComments = useCallback(async (isReset = false) => {
+
         setLoadingComments(true);
         try {
             const token = localStorage.getItem('token');
@@ -62,6 +70,12 @@ export default function Topic(){
                 method: 'GET',
                 headers
             })
+
+            if (response.status === 404) {
+                setIsNotFound(true); 
+                return;
+            }
+            
             const data = await response.json();
 
             if (response.ok) {
@@ -95,6 +109,8 @@ export default function Topic(){
             setCurrentFetch(currentFetch + 1);
         }
     }
+
+    if (isNotFound) return notFound();
 
     if (userLoading) return <h1>Loading...</h1>;
 

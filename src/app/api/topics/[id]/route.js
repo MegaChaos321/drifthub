@@ -10,7 +10,7 @@ export async function GET(request, { params }) {
         if (!id || !uuidValidate(id)) {
             return NextResponse.json(
                 { error: 'Invalid topic ID' },
-                { status: 400 }
+                { status: 404 }
             );
         }
 
@@ -97,9 +97,7 @@ export async function DELETE(request, { params }) {
         }
 
         return NextResponse.json(
-            { 
-                message: 'Topic removed successfully',
-            },
+            { message: 'Topic removed successfully' },
             { status: 200 }
         );
     } catch (error) {
@@ -177,9 +175,7 @@ export async function PUT(request, { params }) {
         }
 
         return NextResponse.json(
-            { 
-                message: 'Topic updated successfully',
-            },
+            { message: 'Topic updated successfully' },
             { status: 200 }
         );
     } catch (error) {

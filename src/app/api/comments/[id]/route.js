@@ -129,9 +129,7 @@ export async function PUT(request, { params }) {
         }
 
         return NextResponse.json(
-            { 
-                message: 'Comment updated successfully',
-            },
+            { message: 'Comment updated successfully' },
             { status: 200 }
         );
   } catch (error) {

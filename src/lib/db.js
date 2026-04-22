@@ -9,6 +9,8 @@ const dbConfig = {
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0,
+    dateStrings: true, 
+    timezone: '+00:00'
 };
 
 let clientPool;

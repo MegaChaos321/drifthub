@@ -1,0 +1,279 @@
+.editButtons{
+    display: flex;
+    gap: 5px;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.editButton{
+    height: 30px;
+    padding: 5px;
+    border-radius: 10px;
+    background: rgb(158, 158, 3);
+    color: white;
+    transition: background ease 0.2s;
+    font-weight: bold;
+}
+
+.editButton:hover{
+    cursor: pointer;
+    background: rgb(124, 124, 2);
+}
+
+.profileData{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.imageSection{
+    flex: 1 1 300px;
+    min-width: 300px;
+    padding-top: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.imageSection img{
+    border-radius: 20px;
+    border: 3px solid white;
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.imageSection > div{
+    margin-top: 10px;
+    margin-left: 20px;
+    font-size: larger;
+}
+
+.infoSection{
+    flex: 1 1 300px;
+    min-width: 300px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.infoSection h2{
+    margin-top: 30px;
+}
+
+.info{
+    margin-left: 20px;
+    font-size: larger;
+}
+
+.aboutMe{
+    background: rgb(72, 67, 67);
+    border-radius: 10px;
+    border: 1px dashed rgb(224, 224, 224);
+    padding-left: 20px;
+    margin-bottom: 30px;
+}
+
+.user{
+    color: rgb(17, 216, 17);
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.deleteButton{
+    display: block;
+    width: 120px;
+    border: 1px solid white;
+    border-radius: 10px;
+    padding: 5px;
+    background: red;
+    color: white;
+    font-weight: bold;
+    margin-left: auto;
+    margin-top: 30px;
+    transition: background ease 0.2s;
+}
+
+.deleteButton:hover{
+    background: rgb(180, 7, 7);
+    cursor: pointer;
+}
+
+.editForm{
+    margin-bottom: 20px;
+}
+
+.editForm h1{
+    margin-bottom: 50px;
+}
+
+.editForm > div{
+    margin-bottom: 20px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    font-size: large;
+}
+
+.editForm label{
+    width: 100px;
+    margin-right: 15px;
+}
+
+.editForm label > span{
+  color: red;
+}
+
+.editForm input:not([type="file"]){
+    background: rgb(65, 63, 63);
+    color: white;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: large;
+    flex: 1;
+}
+
+.editForm input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+}
+
+.editForm textarea{
+    background: rgb(65, 63, 63);
+    color: white;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: large;
+    flex: 1;
+    resize: vertical;
+}
+
+.editForm textarea::placeholder{
+    color: white;
+    opacity: 0.7;
+}
+
+.hiddenInput{
+    display: none;
+}
+
+.fileButton{
+    padding: 5px 10px;
+    display: inline-block;
+    background-color: white;
+    color: black;
+    border-radius: 10px;
+    font-weight: bold;
+    text-align: center;
+    width: fit-content !important;
+    transition: background ease 0.2s;
+}
+
+.fileButton:hover{
+    background-color: rgb(210, 210, 210);
+    cursor: pointer;
+}
+
+.previewImage{
+    display: flex;
+    align-items: center;
+}
+
+.previewImage span{
+    margin-left: 30px;
+    margin-right: 10px;
+}
+
+.previewImage img{
+    height: 200px;
+    width: auto;
+    display: block;
+    aspect-ratio: auto;
+    border-radius: 20px;
+    border: 1px solid white;
+}
+
+.previewImage button{
+    height: 30px;
+    width: 30px;
+    padding: 2px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    background: red;
+    transition: background ease 0.2s;
+    margin-left: 10px;
+}
+
+.previewImage button:hover{
+    cursor: pointer;
+    background: rgb(180, 7, 7);
+}
+
+.checkbox button{
+    width: 30px;
+    height: 30px;
+    background: white;
+    color: green;
+    border: 1px solid black;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: background ease 0.2s;
+}
+
+.checkbox button:hover{
+    background: rgb(210, 210, 210);
+    cursor: pointer;
+}
+
+.checkbox label{
+    width: 120px;
+    margin-left: 15px;
+}
+
+.passwordLabel{
+    width: 200px !important;
+}
+
+.utilityButton{
+    padding: 1px 10px;
+    height: 30px;
+    font-size: medium;
+    background: white;
+    color: black;
+    border: 1px solid black;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    transition: background 0.2s ease;
+}
+
+.utilityButton:hover{
+  background: rgb(210, 210, 210);
+  cursor: pointer;
+}
+
+.saveButton{
+    width: 100px;
+    border: 1px solid white;
+    border-radius: 10px;
+    padding: 5px;
+    background: green;
+    color: white;
+    font-weight: bold;
+    margin-left: auto;
+    transition: background ease 0.2s;
+}
+
+.saveButton:hover{
+    background: rgb(8, 198, 8);
+    cursor: pointer;
+}
