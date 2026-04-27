@@ -189,11 +189,30 @@ body{
 .paginationButtons button:hover{
     background: rgb(46, 46, 46);
     cursor: pointer;
-    color: white;
-    border-radius: 10px;
 }
 
 .paginationButtons button:disabled{
+    background: rgb(181, 181, 181);
+    cursor: default;
+}
+
+.paginationButtonsDark span{
+    margin: 0 5px;
+}
+
+.paginationButtonsDark button{
+    background: white;
+    color: black;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+.paginationButtonsDark button:hover{
+    background: rgb(216, 216, 216);
+    cursor: pointer;
+}
+
+.paginationButtonsDark button:disabled{
     background: rgb(181, 181, 181);
     cursor: default;
 }
@@ -231,6 +250,61 @@ body{
     cursor: pointer;
 }
 
+.topicsNav{
+    display: flex;
+    background: rgb(38, 36, 36);
+    padding: 10px;
+    margin-top: 15px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom: 1px solid white;
+}
+
+.topicsNav button{
+    border: solid white;
+    border-width: 0 1px;
+    background: none;
+    padding: 0;
+}
+
+.topicsNav button:hover{
+    cursor: pointer;
+}
+
+.topicsNav button:disabled{
+    cursor: default;
+}
+
+.topicsNav span{
+  padding: 0 15px;
+  color: white;
+  transition: color 0.2s ease;
+  font-size: large;
+    font-weight: bold;
+}
+
+.topicsNav span:hover{
+  color: rgb(187, 226, 253);
+}
+
+.topicsNav button:first-child{
+  border-left: none;
+}
+
+.topicsNav button:first-child a{
+  padding-left: 5px;
+}
+
+.topicsNav button:last-child{
+  border-right: none;
+}
+
+.userTopics{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
 .errorPage{
     text-align: center;
     padding: 50px;
@@ -265,4 +339,10 @@ body{
 
 .errorPage a:hover{
     background: rgb(46, 46, 46);
+}
+
+@media (max-width: 768px) {
+    .userTopics {
+        grid-template-columns: 1fr;
+    }
 }

@@ -14,6 +14,7 @@ export default function Topic(){
     const router = useRouter();
     const searchParams = useSearchParams();
     const shouldEdit = searchParams.get('edit') === 'true';
+    const origin = searchParams.get('origin');
 
     const [isNotFound, setIsNotFound] = useState(false);
     const [topic, setTopic] = useState(null);
@@ -126,6 +127,7 @@ export default function Topic(){
                     fetchComments={fetchComments}
                     router={router}
                     shouldEdit={shouldEdit}
+                    origin={origin}
                     editingId={editingId}
                     setEditingId={setEditingId}
                 />

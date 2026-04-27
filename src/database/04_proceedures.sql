@@ -231,21 +231,35 @@ CREATE PROCEDURE get_user_activity(
     IN p_targetUserID VARCHAR(36),
     IN p_currentUserID VARCHAR(36),
     IN p_role VARCHAR(20),
-    IN p_viewMode TINYINT
+    IN p_viewMode TINYINT,
+    IN p_limit INT,
+    IN p_offset INT
 )
 BEGIN
 	DECLARE v_targetBin BINARY(16) DEFAULT UUID_TO_BIN(p_targetUserID, 1);
     DECLARE v_currentBin BINARY(16) DEFAULT UUID_TO_BIN(p_currentUserID, 1);
     
     IF p_viewMode = 0 THEN
+		SELECT COUNT(*) AS total
+        FROM topics
+        WHERE isDeleted = 0
+        AND userID = v_targetBin;
+    
         SELECT * FROM get_topics 
         WHERE userID = p_targetUserID
-        ORDER BY createdAt DESC;
+        ORDER BY createdAt DESC
+        LIMIT p_limit OFFSET p_offset;
     ELSEIF p_viewMode = 1 THEN
         IF v_targetBin = v_currentBin OR p_role = 'Administrator' THEN
+			SELECT COUNT(*) AS total
+			FROM topics
+			WHERE isDeleted = 1
+			AND userID = v_targetBin;
+        
             SELECT * FROM get_deleted_topics 
             WHERE userID = p_targetUserID
-            ORDER BY deletedAt DESC;
+            ORDER BY deletedAt DESC
+            LIMIT p_limit OFFSET p_offset;
         ELSE
             SIGNAL SQLSTATE '45000' 
             SET MESSAGE_TEXT = 'Access to deleted topics denied.';

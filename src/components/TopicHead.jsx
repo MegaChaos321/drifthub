@@ -29,7 +29,14 @@ export default function TopicHead(props){
     };
 
     const toggleIsEdit = () => {
-        if (props.shouldEdit) props.router.push('/');
+        if (props.shouldEdit) {
+            if (props.origin === "home"){
+                props.router.push('/');
+            }
+            else if(props.origin === "profile"){
+                props.router.push(`/profile/${props.topic.userID}`)
+            }
+        }
         setIsEdit(!isEdit);
         if (createComment) setCreateComment(false);
         if (props.editingId) props.setEditingId(null);
@@ -178,7 +185,7 @@ export default function TopicHead(props){
                 )}
             </div>
 
-            {isEdit ? (
+            {(isEdit && canManage) ? (
                 <div className={styles.editForm}>
                     <div>
                         <textarea

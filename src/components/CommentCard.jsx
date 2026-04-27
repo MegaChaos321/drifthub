@@ -218,7 +218,7 @@ export default function CommentCard(props){
                     )}
                 </div>
                 {canManage && (
-                    <div>
+                    <div className={styles.actionButtons}>
                         <button
                             onClick={handleEdit}
                             style={editStyle}

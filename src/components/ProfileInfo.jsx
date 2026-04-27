@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import FormEditProfile from './FormEditProfile';
 import FormEditAccount from './FormEditAccount';
 import FormEditPassword from './FormEditPassword';
+import { Lock } from 'lucide-react';
 
 export default function ProfileInfo(props){
     const [editType, setEditType] = useState('');
@@ -126,12 +127,16 @@ export default function ProfileInfo(props){
                         <div className={styles.infoSection}>
                             <h1 className={styles.user}>{props.userProfile.username}</h1>
                             <div className={styles.info}>
-                                {(props.userProfile.showEmail || canManage) && (
-                                    <p><b>Email:</b> {props.userProfile.email}</p>
-                                )}
-                                {(props.userProfile.showBirthDate || canManage) && (
-                                    <p><b>Birthday:</b> {formatDateBirth(props.userProfile.birthDate)}</p>
-                                )}
+                                <p>
+                                    <b>Email:</b> {(props.userProfile.showEmail || canManage)
+                                        ? props.userProfile.email
+                                        : (<span><Lock size={14} /> <i>Private</i></span>)}
+                                </p>
+                                <p>
+                                    <b>Birthday:</b> {(props.userProfile.showBirthDate || canManage)
+                                        ? formatDateBirth(props.userProfile.birthDate)
+                                        : (<span><Lock size={14} /> <i>Private</i></span>)}
+                                </p>
                             </div>
                             <h2>About me:</h2>
                             <div className={styles.aboutMe}>

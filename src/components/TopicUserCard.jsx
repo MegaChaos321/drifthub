@@ -4,9 +4,9 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from 'next/navigation';
 import { PencilLine, Trash2, Hourglass, MessageCircle } from "lucide-react";
-import styles from "./TopicCard.module.css";
+import styles from "./TopicUserCard.module.css";
 
-export default function TopicCard(props){
+export default function TopicUserCard(props){
     const router = useRouter();
     const [deletingTopicId, setDeletingTopicId] = useState(null);
 
@@ -66,39 +66,45 @@ export default function TopicCard(props){
 
     return (
         <div className={styles.topicCard}>
-            <div className={styles.cardHeader}>
-                <Link className={styles.topicLink} href={"/topic/" + props.topic.id}>
-                    <h2>{props.topic.title}</h2>
-                </Link>
+            <div>
+                <div className={styles.cardHeader}>
+                    <Link className={styles.topicLink} href={"/topic/" + props.topic.id}>
+                        <h3>{props.topic.title}</h3>
+                    </Link>
 
-                {canManage && (
-                    <div className={styles.actions}>
-                        <button onClick={() => router.push(`/topic/${props.topic.id}?edit=true&origin=home`)} className={styles.editButton}>
-                            <PencilLine size="20" />
-                        </button>
-                        <button onClick={handleDeleteClick} className={styles.deleteButton}>
-                            {deletingTopicId === props.topic.id ? <Hourglass size="20" /> : <Trash2 size="20" />}
-                        </button>
-                    </div>
-                )}
+                    {canManage && (
+                        <div className={styles.actions}>
+                            <button onClick={() => router.push(`/topic/${props.topic.id}?edit=true&origin=profile`)} className={styles.editButton}>
+                                <PencilLine size="20" />
+                            </button>
+                            <button onClick={handleDeleteClick} className={styles.deleteButton}>
+                                {deletingTopicId === props.topic.id ? <Hourglass size="20" /> : <Trash2 size="20" />}
+                            </button>
+                        </div>
+                    )}
+                </div>
+
+                <hr/>
             </div>
-
-            <hr/>
-
+            
             <div className={styles.cardBody}>
                 <p>{props.topic.content}</p>
             </div>
 
-            <div className={styles.cardFooter}>
-                <span className={styles.comments}>
-                    <MessageCircle size="15" />
-                    <span>{props.topic.commentCount}</span>
-                </span>
-                <span className={styles.date}>{formatDate(props.topic.createdAt)}</span>
-                <span className={styles.user}>By: <Link
-                    href={"/profile/" + props.topic.userID}>
-                        {props.topic.username}
-                </Link></span>
+            <div>
+                {props.topic.content && (
+                    <hr/>
+                )}
+
+                <div className={styles.cardFooter}>
+                    <span className={styles.date}>
+                        <b>Created At:</b> {formatDate(props.topic.createdAt)}
+                    </span>
+                    <span className={styles.comments}>
+                        <MessageCircle size="15" />
+                        <span>{props.topic.commentCount}</span>
+                    </span>
+                </div>
             </div>
         </div>
     );

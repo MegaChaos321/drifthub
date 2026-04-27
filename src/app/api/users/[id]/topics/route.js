@@ -23,7 +23,7 @@ export async function GET(request, { params }) {
         if (!id || !uuidValidate(id)) {
             return NextResponse.json(
                 { error: 'Invalid user profile ID' },
-                { status: 400 }
+                { status: 404 }
             );
         }
 
@@ -43,15 +43,20 @@ export async function GET(request, { params }) {
 
         const { searchParams } = new URL(request.url);
         const viewMode = parseInt(searchParams.get('view') || '0');
+        const limit = parseInt(searchParams.get('limit') || '6');
+        const offset = parseInt(searchParams.get('offset') || '0');
 
-        const [result] = await clientPool.query('CALL get_user_activity(?, ?, ?, ?)', [
+        const [result] = await clientPool.query('CALL get_user_activity(?, ?, ?, ?, ?, ?)', [
             id,
             userID,
             userRole,
-            viewMode
+            viewMode,
+            limit,
+            offset
         ])
 
-        const topics = result[0][0] || [];
+        const total = result[0][0]?.total || 0;
+        const topics = result[1] || [];
         return NextResponse.json(
             {
                 topics: topics.map(topic => ({
@@ -59,12 +64,20 @@ export async function GET(request, { params }) {
                     userID: topic.userID,
                     username: topic.username,
                     title: topic.title,
-                    content: topic.content || '',
+                    content: topic.content?.length > 100 
+                        ? `${topic.content.substring(0, 100)}...` 
+                        : (topic.content || ''),
                     commentCount: topic.commentCount || 0,
                     createdAt: topic.createdAt,
                     updatedAt: topic.updatedAt,
                     deletedAt: topic.deletedAt || null
-                }))
+                })),
+                pagination: {
+                    total,
+                    limit,
+                    offset,
+                    hasMore: offset + limit < total
+                }
             }
         )
     } catch (error) {

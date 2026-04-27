@@ -42,7 +42,14 @@
     font-size: small;
 }
 
+.actionButtons{
+    display: Flex;
+}
+
 .deleteButton{
+    display: flex;
+    align-items: center;
+    justify-content: center;
     height: 30px;
     width: 30px;
     padding: 2px;
@@ -59,6 +66,9 @@
 }
 
 .editButton{
+    display: flex;
+    align-items: center;
+    justify-content: center;
     height: 30px;
     width: 30px;
     padding: 2px;
