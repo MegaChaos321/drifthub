@@ -132,6 +132,7 @@ export default function FormEditAccount(props){
                     type="button"
                     className={styles.utilityButton}
                     onClick={handleCalendarClick}
+                    title="Show Calendar"
                 >
                     <Calendar size={18} />
                 </button>

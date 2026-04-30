@@ -137,6 +137,7 @@ export default function Register() {
                     <button
                         type="button"
                         onClick={handleCalendarClick}
+                        title="Show Calendar"
                     >
                         <Calendar size={18} />
                     </button>
@@ -170,6 +171,7 @@ export default function Register() {
                     <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
+                        title={(showPassword ? "Hide " : "Show ") + "Password"}
                     >
                         {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
@@ -190,6 +192,7 @@ export default function Register() {
                     <button
                         type="button"
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        title={(showConfirmPassword ? "Hide " : "Show ") + "Confirm Password"}
                     >
                         {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>

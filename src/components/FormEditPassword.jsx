@@ -81,6 +81,7 @@ export default function FormEditPassword(props){
                     type="button"
                     className={styles.utilityButton}
                     onClick={() => setShowOldPassword(!showOldPassword)}
+                    title={(showOldPassword ? "Hide " : "Show ") + "Old Password"}
                 >
                     {showOldPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -101,6 +102,7 @@ export default function FormEditPassword(props){
                     type="button"
                     className={styles.utilityButton}
                     onClick={() => setShowNewPassword(!showNewPassword)}
+                    title={(showNewPassword ? "Hide " : "Show ") + "New Password"}
                 >
                     {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -121,6 +123,7 @@ export default function FormEditPassword(props){
                     type="button"
                     className={styles.utilityButton}
                     onClick={() => setShowConfirmNewPassword(!showConfirmNewPassword)}
+                    title={(showConfirmNewPassword ? "Hide " : "Show ") + "Confirm New Password"}
                 >
                     {showConfirmNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>

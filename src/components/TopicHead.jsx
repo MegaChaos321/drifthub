@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { X, PencilLine, MessageCircle } from "lucide-react";
+import { X, PencilLine, MessageCircle, Plus } from "lucide-react";
 import styles from "./TopicHead.module.css";
+import CreatableSelect from "react-select/creatable";
 
 export default function TopicHead(props){
     const [isEdit, setIsEdit] = useState(props.shouldEdit);
@@ -12,6 +13,8 @@ export default function TopicHead(props){
         content: props.topic?.content || ""
     });
     const [formData, setFormData] = useState(maskedFormData);
+    const [maskedTags, setMaskedTags] = useState(props.topic?.tags || []);
+    const [topicTags, setTopicTags] = useState(maskedTags)
     const [editError, setEditError] = useState('');
     const [editLoading, setEditLoading] = useState(false);
     const [createComment, setCreateComment] = useState(false);
@@ -23,9 +26,112 @@ export default function TopicHead(props){
     const isAdmin = props.user?.role === 'Administrator';
     const canManage = isAuthor || isAdmin;
 
+    const MAX_TAGS = 5;
+    const availableTags = props.tags || [];
+
     const editStyle = {
         color: isEdit ? "red" : "white",
         transition: "color 0.2s ease"
+    };
+
+    const darkSelectStyles = {
+        control: (base, state) => ({
+            ...base,
+            backgroundColor: 'rgb(65, 63, 63)',
+            borderRadius: '10px',
+            padding: '5px',
+            flex: 1,
+            display: 'flex',
+            fontSize: '16px',
+            border: state.isFocused ? '2px solid white' : '1px solid rgb(90, 85, 85)',
+            boxShadow: 'none',
+            minHeight: '45px',
+            margin: '10px 10px 0 10px',
+            transition: 'border 0.2s',
+            '&:hover': {
+                borderColor: state.isFocused ? 'white' : 'rgb(120, 115, 115)',
+            }
+        }),
+
+        container: (base) => ({
+            ...base,
+            flex: 1,
+            width: '100%',
+        }),
+
+        input: (base) => ({
+            ...base,
+            color: 'white',
+            'input': {
+                font: 'inherit !important',
+            }
+        }),
+
+        placeholder: (base) => ({
+            ...base,
+            color: 'white',
+            opacity: 0.7,
+            fontSize: '16px',
+        }),
+
+        menu: (base) => ({
+            ...base,
+            backgroundColor: 'rgb(65, 63, 63)',
+            borderRadius: '10px',
+            border: '1px solid rgb(90, 85, 85)',
+            zIndex: 9999,
+        }),
+
+        option: (base, { isDisabled, isFocused, data }) => ({
+            ...base,
+            fontSize: '16px',
+            cursor: isDisabled ? 'not-allowed' : 'pointer',
+            backgroundColor: isFocused && !isDisabled ? 'rgb(85, 80, 80)' : 'transparent',
+            fontWeight: data.__isNew__ ? 'bold' : 'normal',
+            color: isDisabled 
+                ? 'rgb(110, 105, 105)'
+                : data.__isNew__ 
+                    ? '#78b9ff' 
+                    : 'white',
+            '&:active': {
+                backgroundColor: isDisabled ? 'transparent' : 'rgb(100, 95, 95)',
+            },
+        }),
+
+        multiValue: (base) => ({
+            ...base,
+            backgroundColor: 'white',
+            borderRadius: '6px',
+        }),
+
+        multiValueLabel: (base) => ({
+            ...base,
+            color: 'black',
+            fontWeight: 'bold',
+            paddingLeft: '8px',
+        }),
+
+        multiValueRemove: (base) => ({
+            ...base,
+            color: 'black',
+            cursor: 'pointer',
+            '&:hover': {
+                backgroundColor: '#ff4444',
+                color: 'white',
+                borderRadius: '0 6px 6px 0',
+            },
+        }),
+
+        indicatorSeparator: () => ({ display: 'none' }),
+        dropdownIndicator: (base) => ({
+            ...base,
+            color: 'white',
+            '&:hover': { color: '#ccc' }
+        }),
+    };
+
+    const handleTagsChange = (newValue) => {
+        setTopicTags(newValue);
     };
 
     const toggleIsEdit = () => {
@@ -43,7 +149,10 @@ export default function TopicHead(props){
     }
 
     const handleEdit = () => {
-        if (!isEdit) setFormData(maskedFormData);
+        if (!isEdit) {
+            setFormData(maskedFormData);
+            setTopicTags(maskedTags);
+        }
         setEditError('');
         toggleIsEdit();
     }
@@ -54,13 +163,18 @@ export default function TopicHead(props){
         setEditLoading(true);
 
         try {
+            const oldTags = maskedTags.map(t => t.value).sort();
+            const newTags = topicTags.map(t => t.value).sort();
+
+            const tagsChanged = JSON.stringify(oldTags) !== JSON.stringify(newTags);
+
             if (formData.title.trim() === "") {
                 setEditError('Title is required')
                 setEditLoading(false)
                 return
             }
 
-            if (formData.title === maskedFormData.title && formData.content === maskedFormData.content) {
+            if (formData.title === maskedFormData.title && formData.content === maskedFormData.content && !tagsChanged) {
                 setEditError('No changes were made')
                 setEditLoading(false)
                 return
@@ -76,7 +190,8 @@ export default function TopicHead(props){
                 },
                 body: JSON.stringify({
                     title: formData.title.trim(),
-                    content: formData.content.trim()
+                    content: formData.content.trim(),
+                    tags: tagsChanged ? newTags : null
                 })
             })
 
@@ -87,6 +202,10 @@ export default function TopicHead(props){
             }
 
             setMaskedFormData(formData);
+            if (tagsChanged) {
+                setMaskedTags(topicTags);
+                props.fetchTags();
+            }
             handleEdit();
         } catch (error) {
             setEditError(error.message);
@@ -179,7 +298,12 @@ export default function TopicHead(props){
                 )}
                 
                 {canManage && (
-                    <button onClick={handleEdit} style={editStyle} className={styles.editButton}>
+                    <button
+                        onClick={handleEdit}
+                        style={editStyle}
+                        className={styles.editButton}
+                        title={isEdit ? "Cancel Edit" : "Edit Topic"}
+                    >
                         {isEdit ? <X size="20" strokeWidth="5" /> : <PencilLine size="20" />}
                     </button>
                 )}
@@ -193,6 +317,26 @@ export default function TopicHead(props){
                             value={formData.content}
                             placeholder="Write your topic description here..."
                             onChange={(e) => setFormData({...formData, content: e.target.value})}
+                        />
+                    </div>
+
+                    <div>
+                        <CreatableSelect
+                            id="content"
+                            name="content"
+                            isMulti
+                            styles={darkSelectStyles}
+                            options={availableTags}
+                            value={topicTags}
+                            onChange={handleTagsChange}
+                            isOptionDisabled={() => topicTags.length >= MAX_TAGS}
+                            placeholder="Choose or create tag..."
+                            formatCreateLabel={(inputValue) => (
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <Plus size={14} />
+                                    <span>Create tag "{inputValue}"</span>
+                                </div>
+                            )}
                         />
                     </div>
                     
@@ -216,15 +360,31 @@ export default function TopicHead(props){
                     <hr/>
                 </div>
             ) : (
-                maskedFormData.content ? (
-                    <div className={styles.topicBody}>
-                        <h2>{maskedFormData.content}</h2>
-                    </div>
-                ) : (
-                    <div className={styles.editForm}>
-                        <hr/>
-                    </div>
-                )
+                <div>
+                    {maskedFormData.content ? (
+                        <div className={styles.topicBody}>
+                            <h2>{maskedFormData.content}</h2>
+                        </div>
+                    ) : (
+                        <div>
+                            <hr/>
+                        </div>
+                    )}
+
+                    <div className={styles.topicTags}>
+                        <h3>Tags</h3>
+                        <hr aria-hidden="true"/>
+                        {maskedTags.length > 0 ? (
+                            <ul>
+                                {maskedTags.map((tag) => (
+                                    <li key={tag.value}>{tag.value}</li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p>Topic does not contain any tags</p>
+                        )}
+                    </div>     
+                </div>
             )}
             
             <div className={styles.topicFooter}>

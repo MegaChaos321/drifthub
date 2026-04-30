@@ -73,10 +73,18 @@ export default function TopicCard(props){
 
                 {canManage && (
                     <div className={styles.actions}>
-                        <button onClick={() => router.push(`/topic/${props.topic.id}?edit=true&origin=home`)} className={styles.editButton}>
+                        <button
+                            onClick={() => router.push(`/topic/${props.topic.id}?edit=true&origin=home`)}
+                            className={styles.editButton}
+                            title="Edit Topic"
+                        >
                             <PencilLine size="20" />
                         </button>
-                        <button onClick={handleDeleteClick} className={styles.deleteButton}>
+                        <button
+                            onClick={handleDeleteClick}
+                            className={styles.deleteButton}
+                            title="Delete Topic"
+                        >
                             {deletingTopicId === props.topic.id ? <Hourglass size="20" /> : <Trash2 size="20" />}
                         </button>
                     </div>

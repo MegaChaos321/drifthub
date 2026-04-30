@@ -105,17 +105,26 @@
     align-items: center;
 }
 
-.topicForm input{
+.topicForm input,
+.topicForm textarea {
     border-radius: 10px;
-    padding: 5px 10px;
+    padding: 10px;
     flex: 1;
+    font-size: medium;
+    font-family: inherit;
+    border: 1px solid #ccc;
+    outline: none;
+    transition: border 0.2s;
 }
 
-.topicForm textarea{
-    border-radius: 10px;
-    padding: 5px 10px;
-    flex: 1;
+.topicForm textarea {
+    min-height: 100px;
     resize: vertical;
+}
+
+.topicForm input:focus,
+.topicForm textarea:focus {
+    border: 2px solid black;
 }
 
 .topicForm button{

@@ -120,6 +120,7 @@ export default function FormEditProfile(props){
                         />
                         <button
                             onClick={() => setFormData({ ...formData, profileImage: '' })}
+                            title="Remove Image"
                         >
                             <X size="15" />
                         </button>

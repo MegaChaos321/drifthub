@@ -80,6 +80,18 @@ BEGIN
 END //
 DELIMITER ;
 
+-- Trigger After Topic Delete
+DELIMITER //
+DROP TRIGGER IF EXISTS after_topic_delete //
+CREATE TRIGGER after_topic_delete
+AFTER DELETE ON topics
+FOR EACH ROW
+BEGIN
+    DELETE FROM tags 
+    WHERE id NOT IN (SELECT DISTINCT tagID FROM topic_tags);
+END //
+DELIMITER ;
+
 -- Trigger After Comment Insert
 DELIMITER //
 DROP TRIGGER IF EXISTS after_comment_insert//
@@ -194,6 +206,19 @@ BEGIN
         UPDATE comments SET likeCount = likeCount - 1 WHERE id = OLD.commentID;
     ELSE
         UPDATE comments SET dislikeCount = dislikeCount - 1 WHERE id = OLD.commentID;
+    END IF;
+END //
+DELIMITER ;
+
+-- Trigger After Topic Tag Delete
+DELIMITER //
+DROP TRIGGER IF EXISTS after_topic_tag_delete //
+CREATE TRIGGER after_topic_tag_delete
+AFTER DELETE ON topic_tags
+FOR EACH ROW
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM topic_tags WHERE tagID = OLD.tagID) THEN
+        DELETE FROM tags WHERE id = OLD.tagID;
     END IF;
 END //
 DELIMITER ;

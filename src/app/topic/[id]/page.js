@@ -21,6 +21,8 @@ export default function Topic(){
     const [loadingTopic, setLoadingTopic] = useState(false);
     const [comments, setComments] = useState([]);
     const [loadingComments, setLoadingComments] = useState(false);
+    const [tags, setTags] = useState([]);
+    const [loadingTags, setLoadingTags] = useState(false);
     const [currentFetch, setCurrentFetch] = useState(0);
     const [limit] = useState(10);
     const [pagination, setPagination] = useState({ total: 0, hasMore: false });
@@ -97,6 +99,25 @@ export default function Topic(){
         }
     }, [id, currentFetch, limit]);
 
+    const fetchTags = useCallback(async () => {
+        setLoadingTags(true);
+        try {
+            const response = await fetch(`/api/tags`);
+
+            const data = await response.json();
+
+            if (response.ok) {
+                setTags(data.tags || null);
+            } else {
+                console.error('Error fetching tags:', data.error);
+            }
+        } catch (error) {
+            console.error('Error fetching tags:', error);
+        } finally {
+            setLoadingTags(false);
+        }
+    }, []);
+
     useEffect(() => {
         fetchTopic();
     }, [fetchTopic]);
@@ -104,6 +125,10 @@ export default function Topic(){
     useEffect(() => {
         fetchComments();
     }, [fetchComments]);
+
+    useEffect(() => {
+        fetchTags();
+    }, [fetchTags]);
 
     const handleShowMore = () => {
         if(pagination.hasMore && !loadingComments) {
@@ -117,7 +142,7 @@ export default function Topic(){
 
     return (
         <div className="topic-head">
-            {loadingTopic ? (
+            {(loadingTopic) ? (
                 <h2>Loading topic...</h2>
             ) : (
                 <TopicHead
@@ -130,7 +155,10 @@ export default function Topic(){
                     origin={origin}
                     editingId={editingId}
                     setEditingId={setEditingId}
+                    tags={tags}
+                    fetchTags={fetchTags}
                 />
+                
             )}
             {currentFetch === 0 && loadingComments ? (
                 <h2>Loading comments...</h2>

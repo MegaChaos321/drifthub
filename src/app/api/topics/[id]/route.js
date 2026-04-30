@@ -14,13 +14,14 @@ export async function GET(request, { params }) {
             );
         }
 
-        const [rows] = await clientPool.query('SELECT * FROM get_topics WHERE id = ? LIMIT 1',
+        const [result] = await clientPool.query('CALL get_topic_info(?)',
             [id]
         );
 
-        const topic = rows[0];
+        const topicData = result[0][0];
+        const topicTags = result[1] || [];
         
-        if (!topic) {
+        if (!topicData) {
             return NextResponse.json(
                 { error: 'Topic not found' },
                 { status: 404 }
@@ -30,13 +31,17 @@ export async function GET(request, { params }) {
         return NextResponse.json(
             {
                 topic: {
-                    id: topic.id,
-                    userID: topic.userID,
-                    username: topic.username,
-                    title: topic.title,
-                    content: topic.content || '',
-                    createdAt: topic.createdAt,
-                    updatedAt: topic.updatedAt
+                    id: topicData.id,
+                    userID: topicData.userID,
+                    username: topicData.username,
+                    title: topicData.title,
+                    content: topicData.content || '',
+                    createdAt: topicData.createdAt,
+                    updatedAt: topicData.updatedAt,
+                    tags: topicTags.map(topicTag => ({
+                        label: topicTag.name,
+                        value: topicTag.name
+                    }))
                 }
             }
         )
@@ -121,7 +126,7 @@ export async function PUT(request, { params }) {
     try {
         const { id } = await params;
         const user = await verifyAuth(request);
-        const { title, content } = await request.json();
+        const { title, content, tags } = await request.json();
 
         if(!title || title.trim() == ''){
             return NextResponse.json(
@@ -151,6 +156,13 @@ export async function PUT(request, { params }) {
             );
         }
 
+        if (Array.isArray(tags) && tags.length > 5) {
+            return NextResponse.json(
+                { error: 'Maximum 5 tags allowed' },
+                { status: 400 }
+            );
+        }
+
         const [result] = await clientPool.query('CALL update_topic(?, ?, ?, ?, ?)', [
             id,
             user.id,
@@ -172,6 +184,13 @@ export async function PUT(request, { params }) {
                 { error: 'Lacks permission to update topic' },
                 { status: 403 }
             );
+        }
+
+        if (Array.isArray(tags)) {
+            await clientPool.query('CALL sync_topic_tags(?, ?)', [
+                id,
+                JSON.stringify(tags)
+            ]);
         }
 
         return NextResponse.json(

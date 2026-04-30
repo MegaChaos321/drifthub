@@ -79,6 +79,12 @@ export default function Profile() {
                 method: 'GET',
                 headers
             });
+
+            if (response.status === 404) {
+                setIsNotFound(true); 
+                return;
+            }
+
             const data = await response.json();
 
             if (response.ok) {
@@ -198,13 +204,21 @@ export default function Profile() {
                         Displaying {currentPage * limit + 1} - {Math.min((currentPage + 1) * limit, pagination.total)} out of {pagination.total} topics
                     </div>
                         <div className="paginationButtonsDark">
-                            <button onClick={handlePreviousPage} disabled={currentPage === 0}>
+                            <button
+                                onClick={handlePreviousPage}
+                                disabled={currentPage === 0}
+                                title="Previous Page"
+                            >
                                 ⬅
                             </button>
                             <span>
                                 Page {currentPage + 1}
                             </span>
-                            <button onClick={handleNextPage} disabled={!pagination.hasMore}>
+                            <button
+                                onClick={handleNextPage}
+                                disabled={!pagination.hasMore}
+                                title="Next Page"
+                            >
                                 ➞
                             </button>
                         </div>

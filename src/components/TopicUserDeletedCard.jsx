@@ -117,10 +117,18 @@ export default function TopicUserDeletedCard(props){
 
                     {canManage && (
                         <div className={styles.actions}>
-                            <button onClick={handleRestoreClick} className={styles.restoreButton}>
+                            <button
+                                onClick={handleRestoreClick}
+                                className={styles.restoreButton}
+                                title="Restore Deleted Topic"
+                            >
                                 {restoringTopicId === props.topic.id ? <Hourglass size="20" /> : <History size="20" />}
                             </button>
-                            <button onClick={handleDeleteClick} className={styles.deleteButton}>
+                            <button
+                                onClick={handleDeleteClick}
+                                className={styles.deleteButton}
+                                title="Permanently Delete Topic"
+                            >
                                 {deletingTopicId === props.topic.id ? <Hourglass size="20" /> : <Bomb size="20" />}
                             </button>
                         </div>

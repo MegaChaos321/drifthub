@@ -98,6 +98,7 @@ export default function Login() {
                     <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
+                        title={(showPassword ? "Hide " : "Show ") + "Password"}
                     >
                         {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>

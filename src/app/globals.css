@@ -1,5 +1,6 @@
 body{
-  background: rgb(203, 166, 255);
+  background: rgb(0, 0, 30);
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .header{
@@ -71,7 +72,7 @@ body{
   color: black;
   width: 90%;
   margin: 0 auto;
-  padding: 5px 20px;
+  padding: 1px 20px;
 }
 
 .footer{

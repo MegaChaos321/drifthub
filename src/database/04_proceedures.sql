@@ -456,6 +456,26 @@ BEGIN
 END //
 DELIMITER ;
 
+-- Procedure Get Topic Info
+DELIMITER //
+DROP PROCEDURE IF EXISTS get_topic_info //
+CREATE PROCEDURE get_topic_info(
+    IN p_topicID VARCHAR(36)
+)
+BEGIN
+    SELECT * FROM get_topics 
+    WHERE id = p_topicID
+    LIMIT 1;
+
+    SELECT t.`name`
+    FROM tags t
+    INNER JOIN topic_tags tt ON t.id = tt.tagID
+    WHERE tt.topicID = UUID_TO_BIN(p_topicID, 1)
+    ORDER BY t.`name` ASC;
+END //
+DELIMITER ;
+
+-- Procedure Get Topic Comments
 DELIMITER //
 DROP PROCEDURE IF EXISTS get_topic_comments //
 CREATE PROCEDURE get_topic_comments(
@@ -585,6 +605,7 @@ BEGIN
 END //
 DELIMITER ;
 
+-- Procedure Toggle Reaction
 DELIMITER //
 DROP PROCEDURE IF EXISTS toggle_reaction //
 CREATE PROCEDURE toggle_reaction(
@@ -618,6 +639,39 @@ BEGIN
 		AND commentID = UUID_TO_BIN(p_commentID, 1);
         
         SELECT 'UPDATED' AS `status`;
+    END IF;
+END //
+DELIMITER ;
+
+-- Procedure Sync Topic Tags
+DELIMITER //
+DROP PROCEDURE IF EXISTS sync_topic_tags //
+CREATE PROCEDURE sync_topic_tags(
+    IN p_topicID VARCHAR(36),
+    IN p_tagsJSON JSON
+)
+BEGIN
+    DECLARE v_topicBin BINARY(16) DEFAULT UUID_TO_BIN(p_topicID, 1);
+    
+    IF NOT EXISTS (SELECT 1 FROM topics WHERE id = v_topicBin AND isDeleted = 0) THEN
+        SELECT 'NOT_FOUND' AS `status`;
+    ELSE
+        DELETE FROM topic_tags WHERE topicID = v_topicBin;
+
+        IF p_tagsJSON IS NOT NULL AND JSON_LENGTH(p_tagsJSON) > 0 THEN
+            
+            INSERT IGNORE INTO tags (`name`)
+            SELECT DISTINCT jt.tagName
+            FROM JSON_TABLE(p_tagsJSON, '$[*]' COLUMNS (tagName VARCHAR(50) PATH '$')) AS jt;
+
+            INSERT INTO topic_tags (topicID, tagID)
+            SELECT v_topicBin, t.id
+            FROM tags t
+            INNER JOIN JSON_TABLE(p_tagsJSON, '$[*]' COLUMNS (tagName VARCHAR(50) PATH '$')) AS jt
+                ON t.`name` = jt.tagName;
+        END IF;
+
+        SELECT 'SUCCESS' AS `status`;
     END IF;
 END //
 DELIMITER ;

@@ -223,6 +223,7 @@ export default function CommentCard(props){
                             onClick={handleEdit}
                             style={editStyle}
                             className={styles.editButton}
+                            title="Edit Comment"
                         >
                             {(props.editingId === props.comment.id) ? <X size="15" strokeWidth="5" /> : <PencilLine size="15" />}
                         </button>
@@ -230,6 +231,7 @@ export default function CommentCard(props){
                             onClick={handleDelete}
                             disabled={deletingCommentId === props.comment.id}
                             className={styles.deleteButton}
+                            title="Delete Comment"
                         >
                             {deletingCommentId === props.comment.id ? <Hourglass size="15" /> : <Trash2 size="15" />}
                         </button>
@@ -278,6 +280,7 @@ export default function CommentCard(props){
                         disabled={!props.user || reactLoading}
                         className={styles.likeButton}
                         style={likeStyle}
+                        title="Like"
                     >
                         <ThumbsUp size="15" />
                         <span>{maskedLike}</span>
@@ -287,6 +290,7 @@ export default function CommentCard(props){
                         disabled={!props.user || reactLoading}
                         className={styles.dislikeButton}
                         style={dislikeStyle}
+                        title="Dislike"
                     >
                         <ThumbsDown size="15" />
                         <span>{maskedDislike}</span>

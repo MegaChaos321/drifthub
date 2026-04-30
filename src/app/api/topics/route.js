@@ -55,9 +55,9 @@ export async function GET(request) {
 export async function POST(request) {
     try {
         const user = await verifyAuth(request);
-        const { title, content } = await request.json();
+        const { title, content, tags } = await request.json();
 
-        if(!title || title.trim() == ''){
+        if(!title || title.trim() === ''){
             return NextResponse.json(
                 { error: 'Title is required' },
                 { status: 400 }
@@ -71,6 +71,13 @@ export async function POST(request) {
             );
         }
 
+        if (tags && tags.length > 5) {
+            return NextResponse.json(
+                { error: 'Maximum 5 tags allowed' },
+                { status: 400 }
+            );
+        }
+
         const [result] = await clientPool.query('CALL create_topic(?, ?, ?)', [
             user.id,
             title,
@@ -78,6 +85,22 @@ export async function POST(request) {
         ]);
 
         const newTopic = result[0][0];
+
+        if (tags && tags.length > 0) {
+            const [result2] = await clientPool.query('CALL sync_topic_tags(?, ?)', [
+                newTopic.id,
+                JSON.stringify(tags)
+            ]);
+
+            const tagStatus = result2[0][0]?.status;
+            if (tagStatus === 'NOT_FOUND') {
+                return NextResponse.json(
+                    { error: 'Topic does not exist' },
+                    { status: 404 }
+                );
+            }
+        }
+
         return NextResponse.json(
             { 
                 message: 'Topic created successfully!',
@@ -85,7 +108,6 @@ export async function POST(request) {
             },
             { status: 201 }
         );
-
     } catch (error) {
         console.error('Error creating topic:', error);
 

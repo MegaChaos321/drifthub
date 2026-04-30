@@ -9,6 +9,8 @@ export default function Home() {
     const { loading: userLoading, user } = useAuth();
     const [topics, setTopics] = useState([]);
     const [loadingTopics, setLoadingTopics] = useState(false);
+    const [tags, setTags] = useState([]);
+    const [loadingTags, setLoadingTags] = useState(false);
     const [currentPage, setCurrentPage] = useState(0);
     const [limit] = useState(5);
     const [pagination, setPagination] = useState({ total: 0, hasMore: false });
@@ -47,9 +49,32 @@ export default function Home() {
         }
     }, [currentPage, searchValue, limit, order]);
 
+    const fetchTags = useCallback(async () => {
+        setLoadingTags(true);
+        try {
+            const response = await fetch(`/api/tags`);
+
+            const data = await response.json();
+
+            if (response.ok) {
+                setTags(data.tags || null);
+            } else {
+                console.error('Error fetching tags:', data.error);
+            }
+        } catch (error) {
+            console.error('Error fetching tags:', error);
+        } finally {
+            setLoadingTags(false);
+        }
+    }, []);
+
     useEffect(() => {
         fetchTopics();
     }, [fetchTopics]);
+
+    useEffect(() => {
+        fetchTags();
+    }, [fetchTags]);
 
     const handleSearch = () => {
         setCurrentPage(0);
@@ -76,17 +101,23 @@ export default function Home() {
 
     return (
         <div>
-            <TopicActions
-                searchValue={searchValue}
-                setSearchValue={setSearchValue}
-                handleSearch={handleSearch}
-                handleClearSearch={handleClearSearch}
-                order={order}
-                setOrder={setOrder}
-                user={user}
-                fetchTopics={fetchTopics}
-                currentPage={currentPage}
-            />
+            {loadingTags ? (
+                <h2>Laoding tags...</h2>
+            ) : (
+                <TopicActions
+                    searchValue={searchValue}
+                    setSearchValue={setSearchValue}
+                    handleSearch={handleSearch}
+                    handleClearSearch={handleClearSearch}
+                    order={order}
+                    setOrder={setOrder}
+                    user={user}
+                    fetchTopics={fetchTopics}
+                    currentPage={currentPage}
+                    tags={tags}
+                    fetchTags={fetchTags}
+                />
+            )}
             <h1>Welcome to the forum{user && (<span style={{color: "green"}}>{" "+user.username}</span>)}!</h1>
             <br/>
             {loadingTopics ? (
@@ -114,13 +145,21 @@ export default function Home() {
                                 Displaying {currentPage * limit + 1} - {Math.min((currentPage + 1) * limit, pagination.total)} out of {pagination.total} topics
                             </div>
                                 <div className="paginationButtons">
-                                    <button onClick={handlePreviousPage} disabled={currentPage === 0}>
+                                    <button
+                                        onClick={handlePreviousPage}
+                                        disabled={currentPage === 0}
+                                        title="Previous Page"
+                                    >
                                         ⬅
                                     </button>
                                     <span>
                                         Page {currentPage + 1}
                                     </span>
-                                    <button onClick={handleNextPage} disabled={!pagination.hasMore}>
+                                    <button
+                                        onClick={handleNextPage}
+                                        disabled={!pagination.hasMore}
+                                        title="Next Page"
+                                    >
                                         ➞
                                     </button>
                                 </div>
