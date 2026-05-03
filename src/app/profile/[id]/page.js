@@ -141,88 +141,92 @@ export default function Profile() {
                     setIsEdit={setIsEdit}
                 />
             )}
-            <hr/>
-            <div className="topicsNav">
-                <button disabled={viewMode === 0} onClick={() => setViewMode(0)}>
-                    <span
-                        style={{color: viewMode === 0 && "rgb(135, 205, 255)"}}
-                    >
-                        Topics
-                    </span>
-                </button>
-                {(user && (user.id === userProfile.id || user.role === "Administrator")) && (
-                    <button disabled={viewMode === 1} onClick={() => setViewMode(1)}>
-                        <span 
-                            style={{color: viewMode === 1 && "rgb(135, 205, 255)"}}
-                        >
-                            Deleted Topics
-                        </span>
-                    </button>
-                )}
-            </div>
-            {loadingTopics ? (
-                <h2>Loading user topics</h2>
-            ) : (
-                <div style={{marginTop: "30px"}}>
-                    {topics.length > 0 ? (
-                        <div className="userTopics">
-                            {viewMode === 0 ? (
-                                topics.map((topic) => (
-                                    <TopicUserCard
-                                        key={topic.id}
-                                        topic={topic}
-                                        user={user}
-                                        fetchTopics={fetchUserTopics}
-                                    />
-                                ))
+            {!isEdit && (
+                <>
+                    <hr/>
+                    <div className="topicsNav">
+                        <button disabled={viewMode === 0} onClick={() => setViewMode(0)}>
+                            <span
+                                style={{color: viewMode === 0 && "rgb(135, 205, 255)"}}
+                            >
+                                Topics
+                            </span>
+                        </button>
+                        {(user && (user.id === userProfile.id || user.role === "Administrator")) && (
+                            <button disabled={viewMode === 1} onClick={() => setViewMode(1)}>
+                                <span 
+                                    style={{color: viewMode === 1 && "rgb(135, 205, 255)"}}
+                                >
+                                    Deleted Topics
+                                </span>
+                            </button>
+                        )}
+                    </div>
+                    {loadingTopics ? (
+                        <h2>Loading user topics</h2>
+                    ) : (
+                        <div style={{marginTop: "30px"}}>
+                            {topics.length > 0 ? (
+                                <div className="userTopics">
+                                    {viewMode === 0 ? (
+                                        topics.map((topic) => (
+                                            <TopicUserCard
+                                                key={topic.id}
+                                                topic={topic}
+                                                user={user}
+                                                fetchTopics={fetchUserTopics}
+                                            />
+                                        ))
+                                    ) : (
+                                        topics.map((topic) => (
+                                            <TopicUserDeletedCard
+                                                key={topic.id}
+                                                topic={topic}
+                                                user={user}
+                                                fetchTopics={fetchUserTopics}
+                                                setViewMode={setViewMode}
+                                            />
+                                        ))
+                                    )}
+                                </div>
                             ) : (
-                                topics.map((topic) => (
-                                    <TopicUserDeletedCard
-                                        key={topic.id}
-                                        topic={topic}
-                                        user={user}
-                                        fetchTopics={fetchUserTopics}
-                                        setViewMode={setViewMode}
-                                    />
-                                ))
+                                <h2 style={{marginLeft: "30px"}}>
+                                    {viewMode === 0 ? 
+                                        "The user does not have any created topics..." :
+                                        "The user does not have any deleted topics..."
+                                    }
+                                </h2>
                             )}
                         </div>
-                    ) : (
-                        <h2 style={{marginLeft: "30px"}}>
-                            {viewMode === 0 ? 
-                                "The user does not have any created topics..." :
-                                "The user does not have any deleted topics..."
-                            }
-                        </h2>
                     )}
-                </div>
-            )}
 
-            {pagination.total > 0 && (
-                <div className="pagination">
-                    <div>
-                        Displaying {currentPage * limit + 1} - {Math.min((currentPage + 1) * limit, pagination.total)} out of {pagination.total} topics
-                    </div>
-                        <div className="paginationButtonsDark">
-                            <button
-                                onClick={handlePreviousPage}
-                                disabled={currentPage === 0}
-                                title="Previous Page"
-                            >
-                                ⬅
-                            </button>
-                            <span>
-                                Page {currentPage + 1}
-                            </span>
-                            <button
-                                onClick={handleNextPage}
-                                disabled={!pagination.hasMore}
-                                title="Next Page"
-                            >
-                                ➞
-                            </button>
+                    {pagination.total > 0 && (
+                        <div className="pagination">
+                            <div>
+                                Displaying {currentPage * limit + 1} - {Math.min((currentPage + 1) * limit, pagination.total)} out of {pagination.total} topics
+                            </div>
+                                <div className="paginationButtonsDark">
+                                    <button
+                                        onClick={handlePreviousPage}
+                                        disabled={currentPage === 0}
+                                        title="Previous Page"
+                                    >
+                                        ⬅
+                                    </button>
+                                    <span>
+                                        Page {currentPage + 1}
+                                    </span>
+                                    <button
+                                        onClick={handleNextPage}
+                                        disabled={!pagination.hasMore}
+                                        title="Next Page"
+                                    >
+                                        ➞
+                                    </button>
+                                </div>
                         </div>
-                </div>
+                    )}
+                </>
             )}
         </div>
     )

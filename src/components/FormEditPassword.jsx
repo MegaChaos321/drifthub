@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import styles from "./ProfileInfo.module.css";
 import { Eye, EyeOff } from 'lucide-react';
 
@@ -29,6 +29,12 @@ export default function FormEditPassword(props){
 
         if (formData.newPassword !== formData.confirmNewPassword) {
             setError('The new passwords do not match');
+            setLoading(false);
+            return;
+        }
+
+        if (formData.newPassword.length < 6) {
+            setError('The password must have a minimum of 6 characters');
             setLoading(false);
             return;
         }
@@ -96,6 +102,7 @@ export default function FormEditPassword(props){
                     value={formData.newPassword}
                     onChange={handleChange}
                     required
+                    minLength={6}
                     placeholder="New password"
                 />
                 <button
@@ -117,6 +124,7 @@ export default function FormEditPassword(props){
                     value={formData.confirmNewPassword}
                     onChange={handleChange}
                     required
+                    minLength={6}
                     placeholder="Confirm new password"
                 />
                 <button

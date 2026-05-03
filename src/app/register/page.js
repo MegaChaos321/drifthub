@@ -69,6 +69,12 @@ export default function Register() {
             return;
         }
 
+        if (formData.password.length < 6) {
+            setError('The password must have a minimum of 6 characters');
+            setLoading(false);
+            return;
+        }
+
         try {
             const response = await fetch('/api/register', {
                 method: 'POST',

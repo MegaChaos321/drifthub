@@ -102,7 +102,7 @@ export default function Home() {
     return (
         <div>
             {loadingTags ? (
-                <h2>Laoding tags...</h2>
+                <h2>Loading tags...</h2>
             ) : (
                 <TopicActions
                     searchValue={searchValue}
@@ -136,7 +136,7 @@ export default function Home() {
                             ))}
                         </div>
                     ) : (
-                        <h2>No discussion topics have been created yet...</h2>
+                        <h2 style={{marginLeft: "10px", marginBottom: "30px", marginTop: "5px"}}>No discussion topics have been created yet...</h2>
                     )}
 
                     {pagination.total > 0 && (
